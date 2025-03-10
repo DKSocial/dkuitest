@@ -143,7 +143,10 @@ const postTweet = async () => {
       sponsored: false,
       userId: currentUser.uid,
       username: userData.username || 'Usuário Anônimo',
-      userHandle: auth.currentUser?.email ? auth.currentUser.email.split('@')[0] : 'user.dksocial.space',
+      userHandle: auth.currentUser?.email 
+  ? `${auth.currentUser.email.split('@')[0]}.dksocial.space` 
+  : 'user.dksocial.space',
+
       profilePicture: userData.profilePicture || 'https://i.pinimg.com/736x/62/01/0d/62010d848b790a2336d1542fcda51789.jpg',
       verified: userData.verified === true,
       timestamp: firebase.firestore.FieldValue.serverTimestamp() // Isso está correto
