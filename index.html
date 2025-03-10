@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Faça login para desbloquear novas experiências com o DK.">
+    <meta name="keywords" content="acesso, registrar, DK, política de uso">
+    <meta name="author" content="Equipe DK">
+    <title>DK - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="./index.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <img alt="Logotipo" class="logo" src="/logo.SVG">
+        </div>
+        <div class="right">
+            <h1>Conecte-se ao DK<br>e explore um mundo de possibilidades.</h1>
+            <a class="button google" href="#" id="google-login">
+                <img alt="Logo do Google" src="https://agenciapnz.com/wp-content/uploads/Logo-Google-G.png">
+                Acessar com Google
+            </a>
+            <a class="button github" href="#" id="github-login">
+                <img alt="Logo do GitHub" src="https://icones.pro/wp-content/uploads/2021/06/icone-github-grise.png">
+                Acessar com GitHub
+            </a>
+            <div class="divider">
+                <span>Ou</span>
+            </div>
+            <p>Ainda não tem uma conta? <a class="link" href="#" id="register-link">Crie uma agora</a></p>
+
+
+            <a class="link" href="#" id="login-link">Já tem uma conta? Entre aqui</a>
+            <p class="terms">
+                Ao continuar, você confirma que aceita nossos
+                <a class="link" href="#" id="tos-link">Termos de Serviço</a>.
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal de Termos de Serviço -->
+    <div class="modal" id="tos-modal">
+        <div class="modal-content">
+            <span class="close" id="close-tos-modal">×</span>
+            <h2>Política de Uso</h2>
+            <p>Ao utilizar nossa plataforma, você concorda com as seguintes diretrizes:</p>
+            <ul>
+                <li>É necessário ter pelo menos 13 anos para acessar os serviços.</li>
+                <li>A segurança da conta e da senha é de sua inteira responsabilidade.</li>
+                <li>O uso para atividades ilegais ou não autorizadas é proibido.</li>
+                <li>Podemos suspender ou encerrar sua conta sem aviso prévio.</li>
+                <li>Os termos podem ser atualizados a qualquer momento sem notificação.</li>
+            </ul>
+            <p>Agradecemos por escolher nossa plataforma!</p>
+        </div>
+    </div>
+
+   <!-- Modal de Cadastro -->
+<div class="modal" id="register-modal">
+    <div class="modal-content">
+        <span class="close" id="close-register-modal">×</span>
+        <h2>Crie sua Conta</h2>
+        <form id="register-form">
+            <label for="register-email">Email:</label>
+            <input id="register-email" name="email" type="email" required>
+            <label for="register-password">Senha:</label>
+            <input id="register-password" name="password" type="password" required>
+            <button type="submit">Cadastrar</button>
+        </form>
+    </div>
+</div>
+
+
+    <!-- Modal de Login Manual -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <span class="close" id="close-login-modal">×</span>
+            <h2>Acesse sua Conta</h2>
+            <form id="login-form">
+                <label for="login-email">Email:</label>
+                <input id="login-email" name="email" type="email" required>
+                <label for="login-password">Senha:</label>
+                <input id="login-password" name="password" type="password" required>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+<!-- Modal de Perfil -->
+<div class="modal" id="profile-modal">
+    <div class="modal-content">
+        <span class="close" id="close-profile-modal">×</span>
+        <h2>Complete seu Perfil</h2>
+        <form id="profile-form">
+            <label for="username">Nome de Usuário:</label>
+            <img id="profile-picture-preview" src="#" alt="Preview da Foto de Perfil" style="display: none; max-width: 100px; margin-top: 10px;">
+            <input id="username" name="username" type="text" required>
+            <label for="profile-picture">Foto de Perfil:</label>
+            <input id="profile-picture" name="profile-picture" type="file" accept="image/*" required>
+            <button type="submit">Salvar Informações</button>
+        </form>
+    </div>
+</div>
+
+    <!-- Importação do arquivo JavaScript -->
+    <script type="module" src="./OAuth/Firebase/DK/script.js"></script>
+</body>
+</html>
