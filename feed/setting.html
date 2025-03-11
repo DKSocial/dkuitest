@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Configurações</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap');
+
+    * {
+        font-family: 'Google Sans', sans-serif;
+    }
+
+    body {
+        margin: 0;
+        color: #4A148C;
+        transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-theme {
+        background: #000000;
+        color: #E0E0E0;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .section {
+        background-color: #FAF5FF;
+        border: 1px solid #B794F4;
+        border-radius: 14px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        transition: background 0.3s, border-color 0.3s;
+    }
+
+    .dark-theme .section {
+        background-color: #333333;
+        border-color: #555555;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        cursor: pointer;
+    }
+
+    .section-header h2 {
+        margin: 0;
+        font-size: 18px;
+    }
+
+    .section-content {
+        padding: 15px;
+        display: none;
+    }
+
+    .section-content.open {
+        display: block;
+    }
+
+    .language-selector, .theme-selector {
+        margin-top: 20px;
+    }
+
+    .language-selector label, .theme-selector label {
+        font-size: 16px;
+        margin-right: 10px;
+    }
+
+    .language-selector select, .theme-selector select {
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #B794F4;
+        background-color: #FAF5FF;
+        color: #4A148C;
+        transition: background 0.3s, border-color 0.3s, color 0.3s;
+    }
+
+    .dark-theme .language-selector select, .dark-theme .theme-selector select {
+        background-color: #555555;
+        border-color: #777777;
+        color: #E0E0E0;
+    }
+
+    button {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid #B794F4;
+        background-color: #9F7AEA;
+        color: #FAF5FF;
+        cursor: pointer;
+        transition: background 0.3s, border-color 0.3s;
+    }
+
+    .dark-theme button {
+        background-color: #555555;
+        border-color: #777777;
+        color: #E0E0E0;
+    }
+
+    button:hover {
+        background-color: #B794F4;
+    }
+
+    .dark-theme button:hover {
+        background-color: #777777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Seção 1: Idioma -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(1)">
+            <h2>Idioma</h2>
+            <span class="material-icons">expand_more</span>
+        </div>
+        <div class="section-content" id="section1">
+            <div class="language-selector">
+                <label for="language">Selecione o idioma:</label>
+                <select id="language" onchange="changeLanguage(this.value)">
+                    <option value="pt-BR">Português</option>
+                    <option value="en-US">Inglês</option>
+                    <option value="es-ES">Espanhol</option>
+                    <option value="fr-FR">Francês</option>
+                    <option value="de-DE">Alemão</option>
+                    <option value="it-IT">Italiano</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção 2: Tema -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(2)">
+            <h2>Tema</h2>
+            <span class="material-icons">expand_more</span>
+        </div>
+        <div class="section-content" id="section2">
+            <div class="theme-selector">
+                <label for="theme">Selecione o tema:</label>
+                <select id="theme" onchange="changeTheme(this.value)">
+                    <option value="light">Claro</option>
+                    <option value="dark">Escuro</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção 5: Privacidade -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(5)">
+            <h2>Privacidade</h2>
+            <span class="material-icons">expand_more</span>
+        </div>
+        <div class="section-content" id="section5">
+            <p>Configurações de privacidade:</p>
+            <button onclick="managePrivacy()">Gerenciar Privacidade</button>
+        </div>
+    </div>
+
+    <!-- Seção 8: Ajuda -->
+    <div class="section">
+        <div class="section-header" onclick="toggleSection(8)">
+            <h2>Ajuda</h2>
+            <span class="material-icons">expand_more</span>
+        </div>
+        <div class="section-content" id="section8">
+            <p>Precisa de ajuda?</p>
+            <button>Abrir Ajuda</button>
+        </div>
+    </div>
+  </div>
+
+  <script>
+const translations = {
+  "pt-BR": {
+    "Idioma": "Idioma",
+    "Tema": "Tema",
+    "Redes Sociais": "Redes Sociais",
+    "Notificações": "Notificações",
+    "Privacidade": "Privacidade",
+    "Conta": "Conta",
+    "Segurança": "Segurança",
+    "Ajuda": "Ajuda",
+    "Sobre": "Sobre",
+    "Selecione o idioma:": "Selecione o idioma:",
+    "Selecione o tema:": "Selecione o tema:",
+    "Claro": "Claro",
+    "Escuro": "Escuro",
+    "Conectar Facebook": "Conectar Facebook",
+    "Conectar Twitter": "Conectar Twitter",
+    "Conectar Instagram": "Conectar Instagram",
+    "Ativar/Desativar notificações:": "Ativar/Desativar notificações:",
+    "Alternar Notificações": "Alternar Notificações",
+    "Configurações de privacidade:": "Configurações de privacidade:",
+    "Gerenciar Privacidade": "Gerenciar Privacidade",
+    "Configurações da conta:": "Configurações da conta:",
+    "Gerenciar Conta": "Gerenciar Conta",
+    "Configurações de segurança:": "Configurações de segurança:",
+    "Gerenciar Segurança": "Gerenciar Segurança",
+    "Precisa de ajuda?": "Precisa de ajuda?",
+    "Abrir Ajuda": "Abrir Ajuda",
+    "Versão 1.0.0": "Versão 1.0.0",
+    "Ver Detalhes": "Ver Detalhes"
+  },
+  "en-US": {
+    "Idioma": "Language",
+    "Tema": "Theme",
+    "Redes Sociais": "Social Networks",
+    "Notificações": "Notifications",
+    "Privacidade": "Privacy",
+    "Conta": "Account",
+    "Segurança": "Security",
+    "Ajuda": "Help",
+    "Sobre": "About",
+    "Selecione o idioma:": "Select language:",
+    "Selecione o tema:": "Select theme:",
+    "Claro": "Light",
+    "Escuro": "Dark",
+    "Conectar Facebook": "Connect Facebook",
+    "Conectar Twitter": "Connect Twitter",
+    "Conectar Instagram": "Connect Instagram",
+    "Ativar/Desativar notificações:": "Enable/Disable notifications:",
+    "Alternar Notificações": "Toggle Notifications",
+    "Configurações de privacidade:": "Privacy settings:",
+    "Gerenciar Privacidade": "Manage Privacy",
+    "Configurações da conta:": "Account settings:",
+    "Gerenciar Conta": "Manage Account",
+    "Configurações de segurança:": "Security settings:",
+    "Gerenciar Segurança": "Manage Security",
+    "Precisa de ajuda?": "Need help?",
+    "Abrir Ajuda": "Open Help",
+    "Versão 1.0.0": "Version 1.0.0",
+    "Ver Detalhes": "View Details"
+  },
+  "es-ES": {
+    "Idioma": "Idioma",
+    "Tema": "Tema",
+    "Redes Sociais": "Redes Sociales",
+    "Notificações": "Notificaciones",
+    "Privacidade": "Privacidad",
+    "Conta": "Cuenta",
+    "Segurança": "Seguridad",
+    "Ajuda": "Ayuda",
+    "Sobre": "Acerca de",
+    "Selecione o idioma:": "Seleccione el idioma:",
+    "Selecione o tema:": "Seleccione el tema:",
+    "Claro": "Claro",
+    "Escuro": "Oscuro",
+    "Conectar Facebook": "Conectar Facebook",
+    "Conectar Twitter": "Conectar Twitter",
+    "Conectar Instagram": "Conectar Instagram",
+    "Ativar/Desativar notificações:": "Activar/Desactivar notificaciones:",
+    "Alternar Notificações": "Alternar Notificaciones",
+    "Configurações de privacidade:": "Configuraciones de privacidad:",
+    "Gerenciar Privacidade": "Gestionar Privacidad",
+    "Configurações da conta:": "Configuraciones de la cuenta:",
+    "Gerenciar Conta": "Gestionar Cuenta",
+    "Configurações de segurança:": "Configuraciones de seguridad:",
+    "Gerenciar Segurança": "Gestionar Seguridad",
+    "Precisa de ajuda?": "¿Necesitas ayuda?",
+    "Abrir Ajuda": "Abrir Ayuda",
+    "Versão 1.0.0": "Versión 1.0.0",
+    "Ver Detalhes": "Ver Detalles"
+  },
+  "fr-FR": {
+    "Idioma": "Langue",
+    "Tema": "Thème",
+    "Redes Sociais": "Réseaux Sociaux",
+    "Notificações": "Notifications",
+    "Privacidade": "Confidentialité",
+    "Conta": "Compte",
+    "Segurança": "Sécurité",
+    "Ajuda": "Aide",
+    "Sobre": "À propos",
+    "Selecione o idioma:": "Sélectionnez la langue:",
+    "Selecione o tema:": "Sélectionnez le thème:",
+    "Claro": "Clair",
+    "Escuro": "Sombre",
+    "Conectar Facebook": "Connecter Facebook",
+    "Conectar Twitter": "Connecter Twitter",
+    "Conectar Instagram": "Connecter Instagram",
+    "Ativar/Desativar notificações:": "Activer/Désactiver les notifications:",
+    "Alternar Notificações": "Basculer les Notifications",
+    "Configurações de privacidade:": "Paramètres de confidentialité:",
+    "Gerenciar Privacidade": "Gérer la Confidentialité",
+    "Configurações da conta:": "Paramètres du compte:",
+    "Gerenciar Conta": "Gérer le Compte",
+    "Configurações de segurança:": "Paramètres de sécurité:",
+    "Gerenciar Segurança": "Gérer la Sécurité",
+    "Precisa de ajuda?": "Besoin d'aide?",
+    "Abrir Ajuda": "Ouvrir l'Aide",
+    "Versão 1.0.0": "Version 1.0.0",
+    "Ver Detalhes": "Voir les Détails"
+  },
+  "de-DE": {
+    "Idioma": "Sprache",
+    "Tema": "Thema",
+    "Redes Sociais": "Soziale Netzwerke",
+    "Notificações": "Benachrichtigungen",
+    "Privacidade": "Datenschutz",
+    "Conta": "Konto",
+    "Segurança": "Sicherheit",
+    "Ajuda": "Hilfe",
+    "Sobre": "Über",
+    "Selecione o idioma:": "Sprache auswählen:",
+    "Selecione o tema:": "Thema auswählen:",
+    "Claro": "Hell",
+    "Escuro": "Dunkel",
+    "Conectar Facebook": "Facebook verbinden",
+    "Conectar Twitter": "Twitter verbinden",
+    "Conectar Instagram": "Instagram verbinden",
+    "Ativar/Desativar notificações:": "Benachrichtigungen aktivieren/deaktivieren:",
+    "Alternar Notificações": "Benachrichtigungen umschalten",
+    "Configurações de privacidade:": "Datenschutzeinstellungen:",
+    "Gerenciar Privacidade": "Datenschutz verwalten",
+    "Configurações da conta:": "Kontoeinstellungen:",
+    "Gerenciar Conta": "Konto verwalten",
+    "Configurações de segurança:": "Sicherheitseinstellungen:",
+    "Gerenciar Segurança": "Sicherheit verwalten",
+    "Precisa de ajuda?": "Brauchen Sie Hilfe?",
+    "Abrir Ajuda": "Hilfe öffnen",
+    "Versão 1.0.0": "Version 1.0.0",
+    "Ver Detalhes": "Details anzeigen"
+  },
+  "it-IT": {
+    "Idioma": "Lingua",
+    "Tema": "Tema",
+    "Redes Sociais": "Reti Sociali",
+    "Notificações": "Notifiche",
+    "Privacidade": "Privacy",
+    "Conta": "Account",
+    "Segurança": "Sicurezza",
+    "Ajuda": "Aiuto",
+    "Sobre": "Informazioni",
+    "Selecione o idioma:": "Seleziona la lingua:",
+    "Selecione o tema:": "Seleziona il tema:",
+    "Claro": "Chiaro",
+    "Escuro": "Scuro",
+    "Conectar Facebook": "Connetti Facebook",
+    "Conectar Twitter": "Connetti Twitter",
+    "Conectar Instagram": "Connetti Instagram",
+    "Ativar/Desativar notificações:": "Attiva/Disattiva notifiche:",
+    "Alternar Notificações": "Attiva/Disattiva Notifiche",
+    "Configurações de privacidade:": "Impostazioni della privacy:",
+    "Gerenciar Privacidade": "Gestisci Privacy",
+    "Configurações da conta:": "Impostazioni dell'account:",
+    "Gerenciar Conta": "Gestisci Account",
+    "Configurações de segurança:": "Impostazioni di sicurezza:",
+    "Gerenciar Segurança": "Gestisci Sicurezza",
+    "Precisa de ajuda?": "Hai bisogno di aiuto?",
+    "Abrir Ajuda": "Apri Aiuto",
+    "Versão 1.0.0": "Versione 1.0.0",
+    "Ver Detalhes": "Visualizza Dettagli"
+  }
+};
+
+    // Funções das seções
+    function toggleSection(sectionNumber) {
+        const section = document.getElementById(`section${sectionNumber}`);
+        section.classList.toggle('open');
+    }
+
+    function changeLanguage(lang) {
+  if (translations[lang]) {
+    document.querySelectorAll('h2, label, button, p, option').forEach(element => {
+      const text = element.textContent.trim();
+      if (translations[lang][text]) {
+        element.textContent = translations[lang][text];
+      }
+    });
+    localStorage.setItem('selectedLanguage', lang);
+  }
+}
+
+    function changeTheme(theme) {
+        document.body.classList.toggle('dark-theme', theme === 'dark');
+        localStorage.setItem('selectedTheme', theme);
+    }
+
+    function connectSocial(network) {
+        alert(`Conectando ao ${network}...`);
+    }
+
+    function toggleNotifications() {
+        alert('Notificações alternadas.');
+    }
+
+    function managePrivacy() {
+        alert('Gerenciando privacidade...');
+    }
+
+    function manageAccount() {
+        alert('Gerenciando conta...');
+    }
+
+    function manageSecurity() {
+        alert('Gerenciando segurança...');
+    }
+
+    function showHelp() {
+        alert('Abrindo ajuda...');
+    }
+
+    function showAbout() {
+        alert('Versão 1.0.0');
+    }
+
+    // Carregar configurações salvas
+    function loadSettings() {
+        const savedLanguage = localStorage.getItem('selectedLanguage') || 'pt-BR';
+        const savedTheme = localStorage.getItem('selectedTheme') || 'light';
+        document.getElementById('language').value = savedLanguage;
+        document.getElementById('theme').value = savedTheme;
+        changeLanguage(savedLanguage);
+        changeTheme(savedTheme);
+    }
+
+    window.onload = loadSettings;
+  </script>
+</body>
+</html>
