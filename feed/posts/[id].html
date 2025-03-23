@@ -7,14 +7,241 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-<!-- Firebase App (Core) -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <!-- Firebase App (Core) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 
-<!-- Firebase Authentication -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
-<!-- Firebase Firestore -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <style>
+        * {
+            font-family: 'Google Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #FAF5FF, #E9D8FD);
+            color: #4A148C;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .main-content {
+            background-color: #FAF5FF;
+            border: 1px solid #B794F4;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tweet {
+            background-color: #FAF5FF;
+            border: 1px solid #B794F4;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tweet:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .tweet__header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tweet__profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #B794F4;
+        }
+
+        .tweet__username {
+            font-weight: 700;
+            color: #4A148C;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .tweet__username:hover {
+            color: #9F7AEA;
+        }
+
+        .userhandle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .tweet__platform {
+            color: #666;
+            font-size: 14px;
+            margin-left: auto;
+        }
+
+        .tweet__separator {
+            border: 0;
+            border-top: 1px solid #B794F4;
+            margin: 15px 0;
+        }
+
+        .tweet__content {
+            color: #4A148C;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .tweet__hashtags {
+            margin: 10px 0;
+        }
+
+        .hashtag {
+            color: #9F7AEA;
+            text-decoration: none;
+            font-weight: 600;
+            margin-right: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .hashtag:hover {
+            color: #B794F4;
+        }
+
+        .tweet__actions {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .tweet__action {
+            background-color: transparent;
+            color: #4A148C;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .tweet__action:hover {
+            background-color: #F5E6FE;
+            color: #9F7AEA;
+        }
+
+        .tweet__action svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .media-preview {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            border: 4px solid transparent;
+            border-top: 4px solid #9F7AEA;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .tweet {
+                padding: 15px;
+                border-radius: 15px;
+            }
+
+            .tweet__profile-pic {
+                width: 40px;
+                height: 40px;
+            }
+
+            .tweet__username {
+                font-size: 16px;
+            }
+
+            .tweet__content {
+                font-size: 14px;
+            }
+
+            .tweet__action {
+                padding: 6px 10px;
+                font-size: 14px;
+            }
+
+            .media-preview {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tweet {
+                padding: 10px;
+                border-radius: 10px;
+            }
+
+            .tweet__profile-pic {
+                width: 35px;
+                height: 35px;
+            }
+
+            .tweet__username {
+                font-size: 14px;
+            }
+
+            .tweet__content {
+                font-size: 13px;
+            }
+
+            .tweet__action {
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="loading-spinner"></div>
