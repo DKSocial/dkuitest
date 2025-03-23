@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conta Suspensa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Geral */
+    :root {
+      --background-color: #1a1a1a; /* Fundo escuro */
+      --text-color: #e0e0e0; /* Texto claro */
+      --principal-color: #6a1b9a; /* Roxo escuro para títulos e botões */
+      --hover-color: #8e24aa; /* Roxo mais vibrante no hover */
+      --border-color: #333333; /* Bordas escuras */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background-color: var(--background-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: left;
+      color: var(--text-color);
+    }
+
+    .banned-container {
+      max-width: 600px;
+      padding: 2rem;
+      background-color: #2a2a2a; /* Fundo do container escuro */
+      border: 1px solid var(--border-color);
+      border-radius: 15px;
+    }
+
+    .banned-container h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--principal-color); /* Roxo escuro para o título */
+    }
+
+    .banned-container p {
+      font-size: 1rem;
+      color: var(--text-color);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .banned-container a {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--principal-color); /* Roxo escuro para o botão */
+      color: var(--text-color);
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .banned-container a:hover {
+      background-color: var(--hover-color); /* Roxo mais vibrante no hover */
+    }
+
+    .banned-container .note {
+      font-size: 0.875rem;
+      color: #8b98a5; /* Cinza claro para notas */
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="banned-container">
+    <h1>Conta Suspensa</h1>
+    <p>
+      Sua conta, <span id="username-placeholder">[Nome do Usuário]</span>, foi suspensa por violar nossas regras.
+    </p>
+    <p>
+      Especificamente, por:
+      <ul>
+        <li>Violar nossas regras contra evasão de suspensão.</li>
+      </ul>
+    </p>
+    <p>
+      Observe que, se você tentar contornar a suspensão criando novas contas, suspenderemos as novas contas.
+    </p>
+    <p>
+      Se deseja recorrer desta suspensão, entre em contato com nossa equipe de suporte.
+    </p>
+    <a href="mailto:suporte@dksocial.com">Entrar em contato</a>
+    <p class="note">
+      Se você tiver uma assinatura ativa do DK Social, ela não será cancelada automaticamente. Para cancelar qualquer assinatura, siga estas instruções.
+    </p>
+  </div>
+
+  <!-- Firebase SDK v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script>
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyA_d2rRI7GWGvrcGq4KuiZiVhWAKWAkFjQ",
+      authDomain: "dksocialbr.firebaseapp.com",
+      projectId: "dksocialbr",
+      storageBucket: "dksocialbr.appspot.com",
+      messagingSenderId: "920583441447",
+      appId: "1:920583441447:web:5a28bc09a21cbeaa679202",
+      measurementId: "G-WDP6ME7D1P"
+    };
+
+    // Inicializa o Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Verifica o estado de autenticação
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        // Obtém as informações do usuário do Firestore
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          const username = userData.username || 'Usuário'; // Fallback caso o nome de usuário não exista
+
+          // Exibe o nome de usuário na mensagem de banimento
+          document.getElementById('username-placeholder').textContent = username;
+        }
+      } else {
+        // Se o usuário não estiver logado, redireciona para a página de login
+        window.location.href = '/Login/';
+      }
+    });
+  </script>
+  <script>
+    const translations = {
+      "pt-BR": {
+        "Conta Suspensa": "Conta Suspensa",
+        "Sua conta, [Nome do Usuário], foi suspensa por violar nossas regras.": "Sua conta, [Nome do Usuário], foi suspensa por violar nossas regras.",
+        "Especificamente, por:": "Especificamente, por:",
+        "Violar nossas regras contra evasão de suspensão.": "Violar nossas regras contra evasão de suspensão.",
+        "Observe que, se você tentar contornar a suspensão criando novas contas, suspenderemos as novas contas.": "Observe que, se você tentar contornar a suspensão criando novas contas, suspenderemos as novas contas.",
+        "Se deseja recorrer desta suspensão, entre em contato com nossa equipe de suporte.": "Se deseja recorrer desta suspensão, entre em contato com nossa equipe de suporte.",
+        "Entrar em contato": "Entrar em contato",
+        "Se você tiver uma assinatura ativa do DK Social, ela não será cancelada automaticamente. Para cancelar qualquer assinatura, siga estas instruções.": "Se você tiver uma assinatura ativa do DK Social, ela não será cancelada automaticamente. Para cancelar qualquer assinatura, siga estas instruções."
+      },
+      "en-US": {
+        "Conta Suspensa": "Account Suspended",
+        "Sua conta, [Nome do Usuário], foi suspensa por violar nossas regras.": "Your account, [Nome do Usuário], has been suspended for violating our rules.",
+        "Especificamente, por:": "Specifically, for:",
+        "Violar nossas regras contra evasão de suspensão.": "Violating our rules against ban evasion.",
+        "Observe que, se você tentar contornar a suspensão criando novas contas, suspenderemos as novas contas.": "Please note that if you attempt to bypass the suspension by creating new accounts, we will suspend the new accounts.",
+        "Se deseja recorrer desta suspensão, entre em contato com nossa equipe de suporte.": "If you wish to appeal this suspension, please contact our support team.",
+        "Entrar em contato": "Contact Us",
+        "Se você tiver uma assinatura ativa do DK Social, ela não será cancelada automaticamente. Para cancelar qualquer assinatura, siga estas instruções.": "If you have an active DK Social subscription, it will not be automatically canceled. To cancel any subscription, follow these instructions."
+      },
+      "es-ES": {
+        "Conta Suspensa": "Cuenta Suspendida",
+        "Sua conta, [Nome do Usuário], foi suspensa por violar nossas regras.": "Tu cuenta, [Nome do Usuário], ha sido suspendida por violar nuestras reglas.",
+        "Especificamente, por:": "Específicamente, por:",
+        "Violar nossas regras contra evasão de suspensão.": "Violar nuestras reglas contra la evasión de suspensiones.",
+        "Observe que, se você tentar contornar a suspensão criando novas contas, suspenderemos as novas contas.": "Ten en cuenta que, si intentas eludir la suspensión creando nuevas cuentas, suspenderemos las nuevas cuentas.",
+        "Se deseja recorrer desta suspensão, entre em contato com nossa equipe de suporte.": "Si deseas apelar esta suspensión, ponte en contacto con nuestro equipo de soporte.",
+        "Entrar em contato": "Contactar",
+        "Se você tiver uma assinatura ativa do DK Social, ela não será cancelada automaticamente. Para cancelar qualquer assinatura, siga estas instruções.": "Si tienes una suscripción activa a DK Social, no se cancelará automáticamente. Para cancelar cualquier suscripción, sigue estas instrucciones."
+      },
+      "fr-FR": {
+        "Conta Suspensa": "Compte Suspendu",
+        "Sua conta, [Nome do Usuário], foi suspensa por violar nossas regras.": "Votre compte, [Nome do Usuário], a été suspendu pour violation de nos règles.",
+        "Especificamente, por:": "Plus précisément, pour:",
+        "Violar nossas regras contra evasão de suspensão.": "Violer nos règles contre le contournement des suspensions.",
+        "Observe que, se você tentar contornar a suspensão criando novas contas, suspenderemos as novas contas.": "Veuillez noter que si vous tentez de contourner la suspension en créant de nouveaux comptes, nous suspendrons les nouveaux comptes.",
+        "Se deseja recorrer desta suspensão, entre em contato com nossa equipe de suporte.": "Si vous souhaitez contester cette suspension, veuillez contacter notre équipe de support.",
+        "Entrar em contato": "Nous Contacter",
+        "Se você tiver uma assinatura ativa do DK Social, ela não será cancelada automaticamente. Para cancelar qualquer assinatura, siga estas instruções.": "Si vous avez un abonnement actif à DK Social, il ne sera pas annulé automatiquement. Pour annuler un abonnement, suivez ces instructions."
+      },
+      "de-DE": {
+        "Conta Suspensa": "Konto Gesperrt",
+        "Sua conta, [Nome do Usuário], foi suspensa por violar nossas regras.": "Ihr Konto, [Nome do Usuário], wurde wegen Verstoßes gegen unsere Regeln gesperrt.",
+        "Especificamente, por:": "Genauer gesagt, für:",
+        "Violar nossas regras contra evasão de suspensão.": "Verstoß gegen unsere Regeln zur Umgehung von Sperren.",
+        "Observe que, se você tentar contornar a suspensão criando novas contas, suspenderemos as novas contas.": "Bitte beachten Sie, dass wir neue Konten sperren werden, wenn Sie versuchen, die Sperre durch die Erstellung neuer Konten zu umgehen.",
+        "Se deseja recorrer desta suspensão, entre em contato com nossa equipe de suporte.": "Wenn Sie gegen diese Sperre Einspruch einlegen möchten, wenden Sie sich bitte an unser Support-Team.",
+        "Entrar em contato": "Kontakt Aufnehmen",
+        "Se você tiver uma assinatura ativa do DK Social, ela não será cancelada automaticamente. Para cancelar qualquer assinatura, siga estas instruções.": "Wenn Sie ein aktives DK Social-Abonnement haben, wird es nicht automatisch gekündigt. Um ein Abonnement zu kündigen, folgen Sie diesen Anweisungen."
+      },
+      "it-IT": {
+        "Conta Suspensa": "Account Sospeso",
+        "Sua conta, [Nome do Usuário], foi suspensa por violar nossas regras.": "Il tuo account, [Nome do Usuário], è stato sospeso per violazione delle nostre regole.",
+        "Especificamente, por:": "Nello specifico, per:",
+        "Violar nossas regras contra evasão de suspensão.": "Violazione delle nostre regole contro l'evasione delle sospensioni.",
+        "Observe que, se você tentar contornar a suspensão criando novas contas, suspenderemos as novas contas.": "Nota che, se tenti di aggirare la sospensione creando nuovi account, sospenderemo i nuovi account.",
+        "Se deseja recorrer desta suspensão, entre em contato com nossa equipe de suporte.": "Se desideri contestare questa sospensione, contatta il nostro team di supporto.",
+        "Entrar em contato": "Contattaci",
+        "Se você tiver uma assinatura ativa do DK Social, ela não será cancelada automaticamente. Para cancelar qualquer assinatura, siga estas instruções.": "Se hai un abbonamento attivo a DK Social, non verrà annullato automaticamente. Per annullare qualsiasi abbonamento, segui queste istruzioni."
+      }
+    };
+  
+    // Função para traduzir textos
+    function translateTextNodes(element, lang) {
+      element.childNodes.forEach(node => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          let text = node.textContent.trim();
+          if (text && translations[lang] && translations[lang][text]) {
+            node.textContent = translations[lang][text];
+          }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          // Traduz placeholders e outros atributos
+          if (node.tagName === "INPUT" || node.tagName === "TEXTAREA") {
+            const placeholder = node.getAttribute("placeholder");
+            if (placeholder && translations[lang] && translations[lang][placeholder]) {
+              node.setAttribute("placeholder", translations[lang][placeholder]);
+            }
+          }
+          // Evita traduzir scripts e estilos
+          if (node.tagName !== "SCRIPT" && node.tagName !== "STYLE") {
+            translateTextNodes(node, lang);
+          }
+        }
+      });
+    }
+  
+    // Função para salvar o idioma no localStorage
+    function saveLanguage(lang) {
+      localStorage.setItem("selectedLanguage", lang);
+    }
+  
+    // Função para carregar o idioma salvo no localStorage
+    function loadLanguage() {
+      return localStorage.getItem("selectedLanguage") || "pt-BR"; // Idioma padrão é português
+    }
+  
+    // Função para verificar o idioma e aplicar as traduções
+    function checkLanguage() {
+      const params = new URLSearchParams(window.location.search);
+      const langFromURL = params.get("lang"); // Verifica o idioma na URL
+      const lang = langFromURL || loadLanguage(); // Usa o idioma da URL ou do localStorage
+  
+      if (translations[lang]) {
+        translateTextNodes(document.body, lang);
+        saveLanguage(lang); // Salva o idioma no localStorage
+      }
+    }
+  
+    // Executa a verificação de idioma ao carregar a página
+    window.onload = checkLanguage;
+  </script>
+</body>
+</html>

@@ -23,6 +23,21 @@
     * {
         font-family: 'Google Sans', sans-serif;
     }
+
+    .load-more-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background: #9b59b6;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.load-more-btn:hover {
+  background: #8e44ad;
+}
     
     body {
         margin: 0;
@@ -30,6 +45,17 @@
         overflow: hidden;
         color: #4A148C;
     }
+
+    @media (max-width: 720px) {
+
+* {
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+}
     
     .container {
         display: flex;
@@ -59,11 +85,6 @@
         width: 20px;
         height: 20px;
     }
-    
-    body.dark-mode {
-    background-color: black;
-    color: white;
-}
     
     .main-content {
         width: 70%;
@@ -122,12 +143,7 @@
         justify-content: space-between;
         align-items: center;
         margin-top: 10px;
-      
     }
-    body.dark-mode {
-    background: linear-gradient(to bottom, #4A148C, black);
-    color: white;
-} 
     
     .post-box .actions img {
         width: 24px;
@@ -828,7 +844,7 @@
     
     /* Estilo para o timestamp */
     .tweet__timestamp {
-        font-size: 14px;
+        font-size: 12px;
         color: #657786; /* Cor cinza para o timestamp */
         margin-left: 5px;
     }
@@ -850,11 +866,6 @@ body.dark-theme {
 }
 
 .dark-theme .sidebar {
-    background-color: #010101; /* Fundo preto mais claro para a barra lateral */
-    border-color: #4A148C; /* Bordas em roxo escuro */
-}
-
-.dark-theme .trending {
     background-color: #010101; /* Fundo preto mais claro para a barra lateral */
     border-color: #4A148C; /* Bordas em roxo escuro */
 }
@@ -957,7 +968,564 @@ body.dark-theme {
 .dark-theme .comment__actions button:hover {
     background-color: #9F7AEA; /* Roxo claro ao passar o mouse */
 }
-    </style>
+
+.tweet__platform {
+  font-size: 0.8em;
+  color: #666;
+  margin-left: 10px;
+}
+
+.tweet-reactions {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.reaction-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.reaction-btn:hover {
+  transform: scale(1.2);
+}
+
+.poll {
+  background-color: #FAF5FF;
+  border: 1px solid #B794F4;
+  border-radius: 20px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.poll-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.poll__profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #9F7AEA;
+}
+
+.poll-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.poll__username {
+  font-weight: 700;
+  color: #4A148C;
+  text-decoration: none;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.poll__timestamp {
+  font-size: 14px;
+  color: #657786;
+  margin-left: 5px;
+}
+
+.poll-question {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #4A148C;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #FAF5FF;
+  border: 1px solid #B794F4;
+  border-radius: 10px;
+}
+
+.poll-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.poll-option-container {
+  position: relative;
+  background-color: #FAF5FF;
+  border: 1px solid #B794F4;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 5px;
+  transition: transform 0.3s ease;
+}
+
+.poll-option-container:hover {
+  transform: translateX(5px);
+  border-color: #9F7AEA;
+}
+
+.poll-option-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.poll-option-text {
+  font-weight: 500;
+  color: #4A148C;
+  font-size: 15px;
+}
+
+.poll-option-stats {
+  font-size: 14px;
+  color: #657786;
+}
+
+.poll-option-bar-container {
+  height: 8px;
+  background: #E9D8FD;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.poll-option-bar {
+  height: 100%;
+  background: transparent;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.vote-btn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(45deg, #9F7AEA, #5728a8);
+  color: #FAF5FF;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.vote-btn:hover {
+  background: linear-gradient(45deg, #5728a8, #9F7AEA);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.vote-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: translateY(-50%);
+}
+
+.poll-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #B794F4;
+}
+
+.poll-total-votes {
+  font-size: 14px;
+  color: #657786;
+}
+
+.poll-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.poll-action {
+  background-color: transparent;
+  color: #4A148C;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.poll-action:hover {
+  color: #9F7AEA;
+  background-color: #E9D8FD;
+}
+
+.poll-action .material-icons {
+  font-size: 20px;
+}
+
+/* Estilos para o tema escuro */
+.dark-theme .poll {
+  background-color: #1A1A1A;
+  border-color: #4A148C;
+}
+
+.dark-theme .poll-question {
+  background-color: #1A1A1A;
+  border-color: #4A148C;
+  color: #E0E0E0;
+}
+
+.dark-theme .poll-option-container {
+  background-color: #1A1A1A;
+  border-color: #4A148C;
+}
+
+.dark-theme .poll-option-text {
+  color: #E0E0E0;
+}
+
+.dark-theme .poll-option-bar-container {
+  background: #2A2A2A;
+}
+
+.dark-theme .poll-action:hover {
+  background-color: #2A2A2A;
+  color: #9F7AEA;
+}
+
+.dark-theme .poll__username {
+  color: #9F7AEA;
+}
+
+.dark-theme .poll-footer {
+  border-color: #4A148C;
+}
+
+/* Estilos para a modal de polls */
+#pollModal .modal-content {
+  background-color: #FAF5FF;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+#pollModal h2 {
+  color: #4A148C;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#pollForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#pollQuestion {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #9F7AEA;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #4A148C;
+  background-color: #FAF5FF;
+}
+
+#pollOptionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.poll-option {
+  padding: 10px;
+  border: 1px solid #B794F4;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #4A148C;
+  background-color: #FAF5FF;
+}
+
+#addOptionButton {
+  background-color: #9F7AEA;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+#addOptionButton:hover {
+  background-color: #805AD5;
+}
+
+#pollForm button[type="submit"] {
+  background: linear-gradient(45deg, #9F7AEA, #4A148C);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: transform 0.2s ease;
+}
+
+#pollForm button[type="submit"]:hover {
+  transform: translateY(-2px);
+}
+
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  color: #4A148C;
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+  color: #9F7AEA;
+}
+
+/* Container para as enquetes */
+.polls-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Estilos para o tema escuro na modal */
+.dark-theme #pollModal .modal-content {
+  background-color: #1A1A1A;
+}
+
+.dark-theme #pollQuestion,
+.dark-theme .poll-option {
+  background-color: #1A1A1A;
+  border-color: #4A148C;
+  color: #E0E0E0;
+}
+
+.dark-theme #pollModal h2 {
+  color: #9F7AEA;
+}
+
+.dark-theme .close-modal {
+  color: #E0E0E0;
+}
+
+.dark-theme .close-modal:hover {
+  color: #9F7AEA;
+}
+
+/* Estilos para o conteúdo da enquete */
+.tweet__question {
+  font-size: 18px;
+  font-weight: 600;
+  color: #4A148C;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #FAF5FF;
+  border: 1px solid #B794F4;
+  border-radius: 10px;
+}
+
+.tweet__poll-status {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.poll-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.poll-status.active {
+  background-color: #E9D8FD;
+  color: #4A148C;
+  border: 1px solid #9F7AEA;
+}
+
+.poll-status.ended {
+  background-color: #FED7D7;
+  color: #C53030;
+  border: 1px solid #FC8181;
+}
+
+/* Estilos para o tema escuro */
+.dark-theme .poll-status.active {
+  background-color: #2A2A2A;
+  border-color: #9F7AEA;
+  color: #9F7AEA;
+}
+
+.dark-theme .poll-status.ended {
+  background-color: #2A2A2A;
+  border-color: #FC8181;
+  color: #FC8181;
+}
+
+.tweet__options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tweet__option {
+  position: relative;
+  background-color: #FAF5FF;
+  border: 1px solid #B794F4;
+  border-radius: 10px;
+  padding: 15px;
+  padding-right: 120px;
+  margin-bottom: 5px;
+  transition: transform 0.3s ease;
+}
+
+.tweet__option:hover {
+  transform: translateX(5px);
+  border-color: #9F7AEA;
+}
+
+.tweet__option-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.tweet__option-text {
+  font-weight: 500;
+  color: #4A148C;
+  font-size: 15px;
+  flex: 1;
+  margin-right: 10px;
+}
+
+.tweet__option-votes {
+  font-size: 14px;
+  color: #657786;
+  white-space: nowrap;
+}
+
+.tweet__vote-button {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(45deg, #9F7AEA, #5728a8);
+  color: #FAF5FF;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  z-index: 1;
+  min-width: 80px;
+  text-align: center;
+}
+
+.tweet__vote-button:hover {
+  background: linear-gradient(45deg, #5728a8, #9F7AEA);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.tweet__vote-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: translateY(-50%);
+}
+
+/* Estilos para o tema escuro */
+.dark-theme .tweet__question {
+  background-color: #1A1A1A;
+  border-color: #4A148C;
+  color: #E0E0E0;
+}
+
+.dark-theme .tweet__option {
+  background-color: #1A1A1A;
+  border-color: #4A148C;
+}
+
+.dark-theme .tweet__option-text {
+  color: #E0E0E0;
+}
+
+.dark-theme .tweet__option-progress {
+  background: #2A2A2A;
+}
+
+.dark-theme .tweet__option:hover {
+  border-color: #9F7AEA;
+}
+
+/* Estilo para os tooltips */
+[title] {
+  position: relative;
+}
+
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  background-color: #4A148C;
+  color: #FAF5FF;
+  border-radius: 5px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+[title]:hover::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #4A148C;
+  margin-bottom: -5px;
+  z-index: 1000;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Estilo para tooltips no tema escuro */
+.dark-theme [title]:hover::after {
+  background-color: #9F7AEA;
+  color: #1A1A1A;
+}
+
+.dark-theme [title]:hover::before {
+  border-top-color: #9F7AEA;
+}
+  </style>
 </head>
 <body>
   <!-- Loading Spinner -->
@@ -983,31 +1551,35 @@ body.dark-theme {
               <!-- Botões de formatação -->
               <div class="formatting-options">
                 <button type="button" onclick="formatText('bold')" title="Negrito">
-                  <span class="material-icons">format_bold</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bold"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></svg>
                 </button>
                 <button type="button" onclick="formatText('italic')" title="Itálico">
-                  <span class="material-icons">format_italic</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-italic"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></svg>
                 </button>
                 <button type="button" onclick="formatText('strike')" title="Tachado">
-                  <span class="material-icons">format_strikethrough</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-strikethrough"><path d="M16 4H9a3 3 0 0 0-2.83 4"/><path d="M14 12a4 4 0 0 1 0 8H6"/><line x1="4" x2="20" y1="12" y2="12"/></svg>
                 </button>
                 <button type="button" onclick="formatText('paragraph')" title="Parágrafo">
-                  <span class="material-icons">format_align_left</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-align-left"><path d="M15 12H3"/><path d="M17 18H3"/><path d="M21 6H3"/></svg>
                 </button>
+                <button id="createPollButton" title="Criar Enquete" type="button">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-vote"><path d="m9 12 2 2 4-4"/><path d="M5 7c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v12H5V7Z"/><path d="M22 19H2"/></svg>
+                </button>
+                
               </div>
           
               <!-- Botão de foto -->
-              <label for="imageInput" class="label-file">
-                <span class="material-icons">photo</span>
+              <label for="imageInput" class="label-file" title="Adicionar Foto">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
               </label>
-              <input type="file" id="imageInput" />
+              <input type="file" id="imageInput" title="Selecionar arquivo de imagem" />
             </div>
           
             <div class="media-preview"></div>
           
             <div class="actions">
-              <span class="character-count">280</span>
-              <button type="submit" data-js="tweet-button" disabled>Postar</button>
+              <span class="character-count" title="Caracteres restantes">280</span>
+              <button type="submit" data-js="tweet-button" disabled title="Publicar post">Postar</button>
             </div>
           </form>
           
@@ -1081,14 +1653,20 @@ body.dark-theme {
             }
           </style>
 
+      <!-- Container para enquetes -->
+      <div class="polls-container" data-js="polls">
+        <!-- As enquetes serão inseridas aqui dinamicamente -->
+      </div>
+
+      <!-- Container para tweets -->
       <div class="tweets-container" data-js="tweets">
-        <!-- Os tweets serão renderizados aqui dinamicamente -->
+        <!-- Os tweets serão inseridos aqui dinamicamente -->
       </div>
     </div>
 
     <div class="trending">
       <div class="search-bar">
-        <input type="text" id="search" placeholder="Pesquisar posts, @usuários ou #hashtags...">
+        <input type="text" id="search" placeholder="Pesquisar posts, @usuários ou #hashtags..." title="Pesquisar no DK">
       </div>
       <div class="trending-hashtags" id="trending-hashtags">
         <h2>O que está acontecendo</h2>
@@ -1099,16 +1677,49 @@ body.dark-theme {
 
   <div id="commentsModal" class="modal">
     <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h2>Comentários</h2>
-      <div id="commentsList"></div>
-      <!-- Adicione um campo de texto e um botão para enviar comentários -->
+      <div class="modal-header">
+        <h2>Comentários</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div id="commentsList" class="comments-list">
+        <!-- Os comentários serão inseridos aqui dinamicamente -->
+      </div>
       <form id="commentForm">
-        <input type="text" id="commentInput" placeholder="Escreva um comentário..." autocomplete="off" required>
-        <button type="submit">Enviar</button>
+        <div class="form-group">
+          <textarea id="commentInput" placeholder="Digite seu comentário..." required></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Comentar</button>
       </form>
     </div>
   </div>
+
+<!-- Modal de criação de poll -->
+<div id="pollModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Criar Enquete</h2>
+            <button class="close-modal" data-target="pollModal" title="Fechar">&times;</button>
+        </div>
+        <form id="pollForm">
+            <div class="form-group">
+                <label for="pollQuestion">Pergunta da Enquete:</label>
+                <input type="text" id="pollQuestion" required placeholder="Digite sua pergunta aqui...">
+            </div>
+            <div class="form-group">
+                <label>Opções:</label>
+                <div id="pollOptionsContainer">
+                    <input type="text" class="poll-option" placeholder="Opção 1" required>
+                    <input type="text" class="poll-option" placeholder="Opção 2" required>
+                </div>
+                <button type="button" id="addOptionButton" class="btn-secondary" title="Adicionar nova opção">
+                    <span class="material-icons">add</span>
+                    Adicionar Opção
+                </button>
+            </div>
+            <button type="submit" class="btn-primary" title="Criar enquete">Criar Enquete</button>
+        </form>
+    </div>
+</div>
   <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -1117,6 +1728,7 @@ body.dark-theme {
   <!-- Toastify JS -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script src="./js/posts.js"></script>
+  <script src="./js/imgur.js"></script>
   <script>
     const translations = {
       "pt-BR": {
@@ -1257,6 +1869,5 @@ function loadTheme() {
 // Executa a função ao carregar a página
 window.onload = loadTheme;
   </script>
-   <script src="../feed/js/darktheme.js"></script>
 </body>
 </html>

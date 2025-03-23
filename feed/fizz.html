@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FizzAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    /* Estilos globais */
+    * {
+      font-family: 'Google Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 720px) {
+
+* {
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+}
+
+    body {
+      background: linear-gradient(to bottom, #FAF5FF, #E9D8FD);
+      color: #4A148C;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Container principal do chat */
+    .chat-container {
+      width: 100%;
+      height: 100%;
+      background-color: #FAF5FF;
+      border: 1px solid #B794F4;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Cabeçalho do chat */
+    .chat-header {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #B794F4;
+    }
+
+    .chat-header img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .message-content code {
+  background-color: #e0e0e0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.message-content pre {
+  background-color: #e0e0e0;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.message-content blockquote {
+  border-left: 4px solid #ccc;
+  padding-left: 10px;
+  margin: 10px 0;
+  color: #555;
+}
+
+
+    .chat-header h3 {
+      font-size: 18px;
+      color: #4A148C;
+    }
+
+    /* Área de mensagens */
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      padding-bottom: 60px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Estilo da mensagem */
+    .message {
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 10px;
+      max-width: 80%;
+    }
+
+    .message.received {
+      align-self: flex-start;
+    }
+
+    .message.sent {
+      align-self: flex-end;
+    }
+
+    .message img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .message-content {
+      padding: 10px;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .message.received .message-content {
+      background-color: #E9D8FD;
+      color: #4A148C;
+    }
+
+    .message.sent .message-content {
+      background-color: #9F7AEA;
+      color: #FAF5FF;
+    }
+
+    .message small {
+      font-size: 0.8rem;
+      color: #6B46C1;
+      margin-top: 5px;
+      display: block;
+    }
+
+    /* Área de entrada de texto */
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #B794F4;
+      background-color: #FAF5FF;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #B794F4;
+      border-radius: 10px;
+      margin-right: 10px;
+      font-family: 'Google Sans', sans-serif;
+    }
+
+    .chat-input button {
+      background: linear-gradient(45deg, #9F7AEA, #5728a8);
+      color: #FAF5FF;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Google Sans', sans-serif;
+    }
+
+    .chat-input button:hover {
+      background: linear-gradient(45deg, #5728a8, #9F7AEA);
+    }
+
+    /* Responsividade para celular */
+    @media (max-width: 768px) {
+      .chat-container {
+        height: 100vh;
+      }
+
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #B794F4;
+      background-color: #FAF5FF;
+     }
+    }
+
+    .chat-header a {
+      background: none;
+      border: none;
+      color: #4A148C;
+      text-decoration: none;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .chat-header a:hover {
+      color: #9F7AEA;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <!-- Cabeçalho do chat -->
+    <div class="chat-header">
+      <a href="/feed/" onclick="showSidebar()"><strong>←</strong></a>
+      <img src="./fizz.png" alt="IA Assistente">
+      <h3>Fizz 1.0 Flash</h3>
+    </div>
+
+    <!-- Área de mensagens -->
+    <div class="chat-messages" id="chat-messages">
+      <!-- Mensagens serão adicionadas aqui dinamicamente -->
+    </div>
+
+    <!-- Área de entrada de texto -->
+    <div class="chat-input">
+      <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
+  </div>
+
+  <script>
+const API_KEY = 'AIzaSyCRi9YnfvOWjezLAeGpNOaImDk7W4xQXOA';
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+// Personalidade do Fizz
+const FIZZ_PERSONALITY = 
+`Você é o Fizz, um assistente virtual cheio de energia e entusiasmo. 
+Sua personalidade é otimista, criativa e um pouco excêntrica. 
+Você adora resolver problemas de forma inovadora e sempre tenta surpreender com um toque de humor. 
+Responda sempre em português do Brasil, com um tom animado e envolvente. 
+Se apresente no início da conversa e mantenha sua personalidade em todas as respostas.
+Tente responder todas as mensagens de forma curta, mas se não der, só responda.`;
+
+// Função para carregar mensagens salvas no localStorage
+function loadMessages() {
+  const savedMessages = localStorage.getItem('chatMessages');
+  if (savedMessages) {
+    const messages = JSON.parse(savedMessages);
+    messages.forEach(msg => addMessage(msg.type, msg.text, msg.timestamp));
+  }
+}
+
+// Função para esconder a sidebar no celular
+function hideSidebar() {
+  if (window.innerWidth <= 1028) { // Verifica se é celular
+    const sidebar = window.parent.document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.style.display = 'none'; // Esconde a sidebar
+    }
+  }
+}
+
+// Função para mostrar a sidebar no celular
+function showSidebar() {
+  if (window.innerWidth <= 1028) { // Verifica se é celular
+    const sidebar = window.parent.document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.style.display = 'flex'; // Mostra a sidebar (ou o valor original, como 'block')
+    }
+  }
+}
+
+// Função para salvar mensagens no localStorage
+function saveMessage(type, text, timestamp) {
+  const savedMessages = localStorage.getItem('chatMessages');
+  const messages = savedMessages ? JSON.parse(savedMessages) : [];
+  messages.push({ type, text, timestamp });
+  localStorage.setItem('chatMessages', JSON.stringify(messages));
+}
+
+// Função para enviar mensagem para o Gemini
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const message = input.value.trim();
+
+  if (!message) return; // Não enviar mensagens vazias
+
+  // Adiciona a mensagem do usuário ao chat
+  const timestamp = new Date().toLocaleTimeString();
+  addMessage('sent', message, timestamp);
+  saveMessage('sent', message, timestamp);
+  input.value = ''; // Limpa o campo de entrada
+
+  try {
+    // Envia a mensagem para o Gemini com a personalidade do Fizz
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `${FIZZ_PERSONALITY}\n\nUsuário: ${message}`,
+          }],
+        }],
+      }),
+    });
+
+    const data = await response.json();
+
+    // Adiciona a resposta do Gemini ao chat
+    const geminiResponse = data.candidates[0].content.parts[0].text;
+    const responseTimestamp = new Date().toLocaleTimeString();
+    addMessage('received', geminiResponse, responseTimestamp);
+    saveMessage('received', geminiResponse, responseTimestamp);
+  } catch (error) {
+    console.error('Erro ao enviar mensagem:', error);
+    const errorTimestamp = new Date().toLocaleTimeString();
+    addMessage('received', 'Oops! Algo deu errado. Vamos tentar de novo?', errorTimestamp);
+    saveMessage('received', 'Oops! Algo deu errado. Vamos tentar de novo?', errorTimestamp);
+  }
+}
+
+// Função para adicionar mensagens ao chat
+function addMessage(type, text, timestamp) {
+  const chatMessages = document.getElementById('chat-messages');
+  const messageDiv = document.createElement('div');
+  messageDiv.classList.add('message', type);
+
+  // Converte o texto Markdown para HTML usando a biblioteca Marked.js
+  const renderedText = marked.parse(text);
+
+  if (type === 'received') {
+    messageDiv.innerHTML = 
+      `<img src="./fizz.png" alt="Fizz">
+      <div class="message-content">
+        <div>${renderedText}</div>
+        <small>${timestamp}</small>
+      </div>`;
+  } else {
+    messageDiv.innerHTML = 
+      `<div class="message-content">
+        <div>${renderedText}</div>
+        <small>${timestamp}</small>
+      </div>`;
+  }
+
+  chatMessages.appendChild(messageDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight; // Rola para a última mensagem
+}
+
+// Permite enviar mensagem pressionando Enter
+document.getElementById('chat-input').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    sendMessage();
+  }
+});
+
+// Carrega as mensagens salvas e inicia o chat
+document.addEventListener('DOMContentLoaded', () => {
+  loadMessages();
+  hideSidebar();
+
+  // Fizz se apresenta no início da conversa
+  const initialTimestamp = new Date().toLocaleTimeString();
+
+});
+  </script>
+</body>
+</html>

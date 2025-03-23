@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post - DKSocial</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-auth-compat.js"></script>
+</head>
+<body>
+    <div class="loading-spinner"></div>
+    <div class="container">
+        <div class="main-content">
+            <div id="single-post-container"></div>
+        </div>
+    </div>
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_d2rRI7GWGvrcGq4KuiZiVhWAKWAkFjQ",
+            authDomain: "dksocialbr.firebaseapp.com",
+            projectId: "dksocialbr",
+            storageBucket: "dksocialbr.appspot.com",
+            messagingSenderId: "920583441447",
+            appId: "1:920583441447:web:5a28bc09a21cbeaa679202",
+            measurementId: "G-WDP6ME7D1P"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Função para renderizar um tweet individual
+        const renderSingleTweet = (tweet) => {
+            const container = document.getElementById('single-post-container');
+            const timestamp = tweet.timestamp.toDate().toLocaleString();
+            
+            container.innerHTML = `
+                <div class="tweet">
+                    <div class="tweet__header">
+                        <img src="${tweet.profilePicture || 'https://i.pinimg.com/736x/62/01/0d/62010d848b790a2336d1542fcda51789.jpg'}" 
+                             class="tweet__profile-pic" alt="Foto do perfil">
+                        <a href="../perfil.html?user=${tweet.userHandle}" class="tweet__username">${tweet.username}</a>
+                        ${tweet.verified === true ? `
+                            <svg class="verified-icon" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" fill="none" stroke="#9b59b6" stroke-width="2" stroke-dasharray="4,4" />
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" fill="#9b59b6"/>
+                            </svg>
+                        ` : ''}
+                        <span class="userhandle">@${tweet.userHandle}</span>
+                        <span class="tweet__platform">Post Feito Em ${tweet.platform}</span>
+                    </div>
+                    <hr class="tweet__separator">
+                    ${renderMedia(tweet.mediaUrls)}
+                    <div class="tweet__content">
+                        ${parseContent(tweet.content)}
+                    </div>
+                    ${tweet.hashtags.length ? `<div class="tweet__hashtags">${tweet.hashtags.map(tag => `<a href="#" class="hashtag">#${tag}</a>`).join(' ')}</div>` : ''}
+                    <div class="tweet__actions">
+                        <button class="tweet__action" data-action="like" data-tweet-id="${tweet.id}" title="Curtir">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg> ${tweet.likes}
+                        </button>
+                        <button class="tweet__action" data-action="retweet" data-tweet-id="${tweet.id}" title="Repostar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-repeat-2"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg> ${tweet.retweets}
+                        </button>
+                        <button class="tweet__action" data-action="comment" data-tweet-id="${tweet.id}" title="Comentar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-more"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg> (${tweet.comments.length})
+                        </button>
+                        <button class="tweet__action" data-action="share" data-tweet-id="${tweet.id}" title="Compartilhar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Função para renderizar mídia
+        const renderMedia = (mediaUrls) => {
+            return mediaUrls.map(url => `<a href="${url}" target="_blank"><img src="${url}" class="media-preview" alt="Mídia do post"></a>`).join('');
+        };
+
+        // Função para parsear o conteúdo
+        const parseContent = (content) => {
+            content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            content = content.replace(/~~(.*?)~~/g, '<s>$1</s>');
+            content = content.replace(/\n\n/g, '</p><p>');
+            content = `<p>${content}</p>`;
+            content = content.replace(/#([^\s#]+)/g, '<a href="#" class="hashtag">#$1</a>');
+            content = content.replace(/@([^\s]+)/g, (match, username) => {
+                return `<a href="../perfil.html?user=${encodeURIComponent(username)}" class="mention">@${username}</a>`;
+            });
+            return content;
+        };
+
+        // Função para mostrar toast
+        const showToast = (message, isError = false) => {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: isError ? '#e74c3c' : '#2ecc71'
+            }).showToast();
+        };
+
+        // Função para carregar o post
+        const loadPost = async () => {
+            try {
+                // Pegar o ID do post da URL
+                const pathParts = window.location.pathname.split('/');
+                const postId = pathParts[pathParts.length - 1];
+                
+                console.log('Carregando post:', postId); // Debug
+                
+                const tweetDoc = await db.collection('tweets').doc(postId).get();
+                
+                if (tweetDoc.exists) {
+                    const tweet = { id: tweetDoc.id, ...tweetDoc.data() };
+                    renderSingleTweet(tweet);
+                    setupTweetActions();
+                } else {
+                    showToast('Post não encontrado.', true);
+                    setTimeout(() => {
+                        window.location.href = '../feed.html';
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar post:', error); // Debug
+                showToast(`Erro ao carregar post: ${error.message}`, true);
+                setTimeout(() => {
+                    window.location.href = '../feed.html';
+                }, 2000);
+            }
+        };
+
+        // Função para configurar ações do tweet
+        const setupTweetActions = () => {
+            const container = document.getElementById('single-post-container');
+            container.addEventListener('click', async (e) => {
+                const actionButton = e.target.closest('[data-action]');
+                if (!actionButton) return;
+
+                const action = actionButton.getAttribute('data-action');
+                const tweetId = actionButton.getAttribute('data-tweet-id');
+
+                try {
+                    const tweetRef = db.collection('tweets').doc(tweetId);
+                    const tweetDoc = await tweetRef.get();
+                    const tweetData = tweetDoc.data();
+
+                    switch (action) {
+                        case 'like':
+                            const userHasLiked = tweetData.likesUsers && tweetData.likesUsers.includes(auth.currentUser.uid);
+                            if (userHasLiked) {
+                                await tweetRef.update({
+                                    likes: tweetData.likes - 1,
+                                    likesUsers: firebase.firestore.FieldValue.arrayRemove(auth.currentUser.uid)
+                                });
+                            } else {
+                                await tweetRef.update({
+                                    likes: tweetData.likes + 1,
+                                    likesUsers: firebase.firestore.FieldValue.arrayUnion(auth.currentUser.uid)
+                                });
+                            }
+                            break;
+
+                        case 'share':
+                            const shareUrl = `${window.location.origin}/feed/posts/${tweetId}`;
+                            await navigator.clipboard.writeText(shareUrl);
+                            showToast('Link copiado para a área de transferência!');
+                            break;
+
+                        case 'retweet':
+                            // Implementar lógica de retweet
+                            break;
+
+                        case 'comment':
+                            // Implementar lógica de comentários
+                            break;
+                    }
+
+                    loadPost(); // Recarrega o post para atualizar as contagens
+                } catch (error) {
+                    showToast(`Erro ao realizar ação: ${error.message}`, true);
+                }
+            });
+        };
+
+        // Verificar autenticação e carregar o post
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadPost();
+            } else {
+                window.location.href = '../log/';
+            }
+        });
+    </script>
+</body>
+</html> 

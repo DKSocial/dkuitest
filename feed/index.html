@@ -15,11 +15,14 @@
   <!-- Material Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
 
-  <!-- Toastify CSS -->
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<!-- Toastify CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<!-- Toastify JS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   
   <style>
 * {
+    overflow: hidden;
     font-family: 'Google Sans', sans-serif;
 }
 
@@ -153,7 +156,16 @@ body {
     border-radius: 10px;
 }
 
-@media (max-width: 1028px) {
+@media (max-width: 720px) {
+
+    * {
+        user-select: none;
+        -webkit-user-select: none;
+        cursor: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+
    
     body {
         overflow-y: auto;
@@ -174,14 +186,25 @@ body {
         background-color: #FAF5FF;
         flex-direction: row;
         justify-content: space-around;
-        padding: 8px;
-        z-index: 9999;
+        padding: 1px;
+        z-index: 999;
     }
 
     .sidebar a {
         font-size: 18px;
-        gap: 2px;
+        gap: 0; /* Remove o espaçamento entre ícone e texto */
         flex-direction: column;
+        align-items: center; /* Centraliza ícone e texto */
+    }
+
+    .sidebar a .mdi {
+        margin: 0; /* Remove margens do ícone */
+        padding: 0; /* Remove paddings do ícone */
+    }
+
+    .sidebar a span {
+        margin: 0; /* Remove margens do texto */
+        padding: 0; /* Remove paddings do texto */
     }
 
     .active {
@@ -193,9 +216,8 @@ body {
     }
 
     .main-content {
-        width: 96%;
+        width: 100%;
         overflow: auto;
-        padding: 15px;
         margin-bottom: 60px;
     }
 
@@ -917,6 +939,32 @@ body.dark-theme {
 .dark-theme .comment__actions button:hover {
     background-color: #9F7AEA; /* Roxo claro ao passar o mouse */
 }
+ /* Estilo para o iframe principal */
+ #main-content iframe {
+            position: relative;
+            z-index: 2; /* Define um z-index maior para o iframe principal */
+        }
+
+        .chat {
+            display: none;
+        }
+
+        /* Contêiner do ícone */
+.icon-container {
+    position: relative; /* Permite posicionar a bolha de notificação em relação a este contêiner */
+}
+
+/* Estilo para a bolha de notificação */
+.notification-bubble {
+    background-color: #9F7AEA;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    position: absolute; /* Posiciona a bolha em relação ao contêiner do ícone */
+    top: -0px; /* Ajuste para posicionar a bolha acima do ícone */
+    right: -3px; /* Ajuste para posicionar a bolha à direita do ícone */
+}
   </style>
 </head>
 <body>
@@ -925,35 +973,50 @@ body.dark-theme {
   </div>
 
   <div class="container">
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
       <div class="logo">
         <img src="./logo.png" alt="logo" class="logo">
       </div>
       <a href="#" class="active" data-iframe="feed.html">
-        <span class="mdi mdi-home"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-home">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
         Início
     </a>
-    <a href="#" data-iframe="/Perfil/">
-        <span class="mdi mdi-account"></span>
+    <a href="#" data-iframe="explore.html">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+        Explorar
+    </a>
+    <a href="#" data-iframe="fizz.html">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+        FizzAI
+    </a>
+    <a href="#" data-iframe="perfil.html">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          
         Perfil
     </a>
-    <a href="#" data-iframe="/Chat/">
-        <span class="mdi mdi-email-multiple"></span>
+    <a href="#" data-iframe="chat.html">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail">
+            <rect width="20" height="16" x="2" y="4" rx="2" />
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+          </svg>
         Chat
-    </a>
-    <a href="#" data-iframe="/DKLip/">
-        <span class="mdi mdi-video-image"></span>
-        DKLip
-    </a>
-    <a href="#" data-iframe="setting.html">
-        <span class="mdi mdi-cog"></span>
-        Config.
     </a>
     </div>
 
     <div class="main-content" id="main-content">
         <!-- O conteúdo do iframe será carregado aqui -->
     </div>
+
+    <iframe class="chat" src="chat.html"></iframe>
     
 
   <!-- Scripts -->
@@ -963,127 +1026,140 @@ body.dark-theme {
   
   <!-- Toastify JS -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-  <script>
-const translations = {
-  "pt-BR": {
-    "Início": "Início",
-    "Perfil": "Perfil",
-    "Chat": "Chat",
-    "DKLip": "DKLip",
-    "Config.": "Config.",
-    // Adicione mais traduções conforme necessário
-  },
-  "en-US": {
-    "Início": "Home",
-    "Perfil": "Profile",
-    "Chat": "Chat",
-    "DKLip": "DKLip",
-    "Config.": "Settings",
-    // Adicione mais traduções conforme necessário
-  },
-  "es-ES": {
-    "Início": "Inicio",
-    "Perfil": "Perfil",
-    "Chat": "Chat",
-    "DKLip": "DKLip",
-    "Config.": "Config.",
-    // Adicione mais traduções conforme necessário
-  },
-  "fr-FR": {
-    "Início": "Accueil",
-    "Perfil": "Profil",
-    "Chat": "Chat",
-    "DKLip": "DKLip",
-    "Config.": "Config.",
-    // Adicione mais traduções conforme necessário
-  },
-  "de-DE": {
-    "Início": "Startseite",
-    "Perfil": "Profil",
-    "Chat": "Chat",
-    "DKLip": "DKLip",
-    "Config.": "Einstellungen",
-    // Adicione mais traduções conforme necessário
-  },
-  "it-IT": {
-    "Início": "Home",
-    "Perfil": "Profilo",
-    "Chat": "Chat",
-    "DKLip": "DKLip",
-    "Config.": "Impostazioni",
-    // Adicione mais traduções conforme necessário
-  }
-};
-
-function changeLanguage(lang) {
-  if (translations[lang]) {
-    document.querySelectorAll('a, button, span').forEach(element => {
-      const text = element.textContent.trim();
-      if (translations[lang][text]) {
-        element.textContent = translations[lang][text];
-      }
-    });
-    localStorage.setItem('selectedLanguage', lang);
-  }
-}
-
-// Função para carregar o idioma salvo no localStorage
-function loadLanguage() {
-  const savedLanguage = localStorage.getItem('selectedLanguage') || 'pt-BR'; // Idioma padrão é 'pt-BR'
-  changeLanguage(savedLanguage); // Aplica o idioma salvo
-}
-
-// Executa a função ao carregar a página
-window.onload = function() {
-  loadTheme();
-  loadLanguage();
-};
-  </script>
+ 
   <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Define o iframe inicial como feed.html
     const mainContent = document.getElementById('main-content');
-    mainContent.innerHTML = ''; // Limpa o conteúdo anterior (se houver)
+    const sidebarLinks = document.querySelectorAll('.sidebar a');
+    let currentIframe = null;
 
-    const initialIframe = document.createElement('iframe');
-    initialIframe.src = '/feed/feed.html';
-    initialIframe.style.width = 'auto';
-    initialIframe.style.height = '100vh'; // 100% da altura da viewport
-    initialIframe.style.border = 'none';
+    // Função para criar e configurar um novo iframe
+    function createIframe(url) {
+        const iframe = document.createElement('iframe');
+        iframe.src = url;
+        iframe.style.width = '100%';
+        iframe.style.height = '100vh';
+        iframe.style.border = 'none';
+        iframe.style.overflow = 'auto';
+        return iframe;
+    }
 
-    mainContent.appendChild(initialIframe);
+    // Função para extrair o nome da página e parâmetros da URL
+    function getPageFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageParam = urlParams.get('page');
+        const userParam = urlParams.get('user');
+        
+        if (pageParam === 'perfil' && userParam) {
+            return `perfil.html?user=${userParam}`;
+        }
+        
+        return pageParam ? `${pageParam}.html` : 'feed.html';
+    }
+
+    // Função para carregar uma nova página
+    function loadPage(pageName) {
+        // Remove o iframe anterior se existir
+        if (currentIframe) {
+            currentIframe.remove();
+        }
+
+        // Cria e adiciona o novo iframe
+        currentIframe = createIframe(pageName);
+        mainContent.appendChild(currentIframe);
+
+        // Atualiza a URL sem recarregar a página
+        const newUrl = pageName.includes('?') ? 
+            `?${pageName.split('?')[1]}` : 
+            `?page=${pageName.replace('.html', '')}`;
+        window.history.pushState({}, '', newUrl);
+
+        // Atualiza a classe active nos links da sidebar
+        sidebarLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-iframe') === pageName.split('?')[0]) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // Função para inicializar a página
+    function initializePage() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageParam = urlParams.get('page');
+        
+        // Se não houver página especificada ou for 'feed', carrega feed.html
+        if (!pageParam || pageParam === 'feed') {
+            loadPage('feed.html');
+        } else {
+            // Para outras páginas, verifica se tem parâmetros adicionais
+            const userParam = urlParams.get('user');
+            if (pageParam === 'perfil' && userParam) {
+                loadPage(`perfil.html?user=${userParam}`);
+            } else {
+                loadPage(`${pageParam}.html`);
+            }
+        }
+    }
 
     // Adiciona os listeners para os links da sidebar
-    document.querySelectorAll('.sidebar a').forEach(link => {
+    sidebarLinks.forEach(link => {
         link.addEventListener('click', function(event) {
-            event.preventDefault(); // Impede o comportamento padrão do link
-
-            const iframeUrl = this.getAttribute('data-iframe'); // Obtém o URL do iframe do atributo data-iframe
-
-            // Limpa o conteúdo anterior
-            mainContent.innerHTML = '';
-
-            // Cria um novo iframe
-            const iframe = document.createElement('iframe');
-            iframe.src = iframeUrl;
-            iframe.style.width = 'auto';
-            iframe.style.height = '100vh'; // 100% da altura da viewport
-            iframe.style.border = 'none';
-
-            // Adiciona o iframe à div main-content
-            mainContent.appendChild(iframe);
+            event.preventDefault();
+            const iframeUrl = this.getAttribute('data-iframe');
+            
+            // Se o link for para o feed, remove os parâmetros da URL
+            if (iframeUrl === 'feed.html') {
+                window.history.pushState({}, '', '/feed/');
+            }
+            
+            loadPage(iframeUrl);
         });
     });
+
+    // Suporte para os botões de voltar/avançar do navegador
+    window.addEventListener('popstate', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageParam = urlParams.get('page');
+        const pageName = pageParam || 'feed';
+        loadPage(pageName);
+    });
+
+    // Inicializa a página
+    initializePage();
 });
 
 // Função para carregar o tema salvo no localStorage
 function loadTheme() {
-    const savedTheme = localStorage.getItem('selectedTheme') || 'light'; // Tema padrão é 'light'
-    document.body.classList.toggle('dark-theme', savedTheme === 'dark'); // Aplica o tema escuro se salvo
+    const savedTheme = localStorage.getItem('selectedTheme') || 'light';
+    document.body.classList.toggle('dark-theme', savedTheme === 'dark');
 }
 
 // Executa a função ao carregar a página
 window.onload = loadTheme;
+  </script>
+
+  <script>
+window.addEventListener('message', function(event) {
+  if (event.data.type === 'newMessage') {
+    const message = event.data.message;
+    const sender = event.data.sender;
+
+    // Exibe a notificação usando Toastify
+    Toastify({
+      text: `Nova mensagem de ${sender}: ${message}`,
+      duration: 5000, // Duração da notificação em milissegundos
+      gravity: "top", // Posição da notificação (top, bottom)
+      position: "right", // Posição da notificação (left, right, center)
+      backgroundColor: "#9F7AEA", // Cor de fundo da notificação
+      stopOnFocus: true, // Para a notificação quando o usuário foca na janela
+      onClick: function() {
+        // Ação ao clicar na notificação (opcional)
+        window.location.href = `chat.html?conversationId=${event.data.conversationId}`;
+      }
+    }).showToast();
+  }
+});
   </script>
 </body>
 </html>

@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/feed/posts/:id",
+      "destination": "/feed/posts/[id].html"
+    }
+  ]
+} 
