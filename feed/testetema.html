@@ -6,6 +6,27 @@
     <title>Darquemode</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: black;
+    transition: background 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+    background: linear-gradient(to bottom, #4A148C, black);
+    color: white;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 20px;
+    cursor: pointer;
+}
+
+}
+</style>
 <body>
     <button id="enable-dark">Ativar Modo Escuro</button>
     <button id="disable-dark">Desativar Modo Escuro</button>
