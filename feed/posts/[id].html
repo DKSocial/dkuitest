@@ -4,9 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post - DKSocial</title>
-    <link rel="stylesheet" href="../css/style.css">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+
+    <!-- Toastify CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
     <!-- Firebase App (Core) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 
@@ -15,6 +26,7 @@
 
     <!-- Firebase Firestore -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
     <style>
         * {
             font-family: 'Google Sans', sans-serif;
@@ -30,9 +42,127 @@
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: #FAF5FF;
             padding: 20px;
+            display: flex;
+            border: 1px solid #B794F4;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar a {
+            color: #4A148C;
+            text-decoration: none;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sidebar a img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .main-content {
+            width: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .main-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: #9F7AEA;
+            border-radius: 3px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: #B794F4;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 60px;
+        }
+
+        .mdi {
+            font-size: 26px;
+        }
+
+        @media (max-width: 720px) {
+            * {
+                user-select: none;
+                -webkit-user-select: none;
+                cursor: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+            }
+
+            body {
+                overflow-y: auto;
+            }
+
+            .container {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: fixed;
+                bottom: 0px;
+                background-color: #FAF5FF;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 1px;
+                z-index: 999;
+            }
+
+            .sidebar a {
+                font-size: 18px;
+                gap: 0;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .sidebar a .mdi {
+                margin: 0;
+                padding: 0;
+            }
+
+            .sidebar a span {
+                margin: 0;
+                padding: 0;
+            }
+
+            .logo {
+                display: none;
+            }
+
+            .main-content {
+                margin-bottom: 60px;
+            }
         }
 
         .main-content {
@@ -246,6 +376,43 @@
 <body>
     <div class="loading-spinner"></div>
     <div class="container">
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <img src="../logo.png" alt="logo" class="logo">
+            </div>
+            <a href="/feed/?page=feed" class="active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-home">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                Início
+            </a>
+            <a href="/feed/?page=explore">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                </svg>
+                Explorar
+            </a>
+            <a href="/feed/?page=fizz">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+                FizzAI
+            </a>
+            <a href="/feed/?page=perfil">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                Perfil
+            </a>
+            <a href="/feed/?page=chat">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail">
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+                Chat
+            </a>
+        </div>
         <div class="main-content">
             <div id="single-post-container"></div>
         </div>
