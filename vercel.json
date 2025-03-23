@@ -3,6 +3,10 @@
     {
       "source": "/feed/posts/:id",
       "destination": "/feed/posts/[id].html"
+    },
+    {
+      "source": "/user/:userhandle",
+      "destination": "/feed/perfil.html"
     }
   ]
 } 
