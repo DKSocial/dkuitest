@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>DK - Home</title>
+  <link rel="stylesheet" type="text/css" href="css/loading.css">
   
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -19,6 +20,21 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <!-- Toastify JS -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  
+  <!-- Firebase Config -->
+  <script src="/feed/js/firebase-config.js"></script>
+  
+  <!-- Loading Manager -->
+  <script src="/feed/js/loading.js"></script>
+  
+  <!-- Toastify JS -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   
   <style>
 * {
@@ -968,9 +984,20 @@ body.dark-theme {
   </style>
 </head>
 <body>
-  <!-- Loading Spinner -->
-  <div class="loading-spinner">
-  </div>
+    <div class="loading-container">
+        <div class="loading-content">
+            <div class="loading-profile">
+                <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="Foto de perfil" class="loading-profile-pic" id="loadingProfilePic">
+                <div class="loading-welcome">
+                    <div class="loading-welcome-text">Olá,</div>
+                    <div class="loading-username" id="loadingUsername">Carregando...</div>
+                </div>
+            </div>
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Preparando seu feed</div>
+            <div class="loading-subtext">Isso pode levar alguns segundos...</div>
+        </div>
+    </div>
 
   <div class="container">
     <div class="sidebar" id="sidebar">
@@ -995,7 +1022,7 @@ body.dark-theme {
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
         FizzAI
     </a>
-    <a href="#" data-iframe="perfil.html">
+    <a href="#" data-iframe="/user/@me">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user">
             <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
@@ -1020,13 +1047,6 @@ body.dark-theme {
     
 
   <!-- Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  
-  <!-- Toastify JS -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
- 
   <script>
 document.addEventListener('DOMContentLoaded', function() {
     const mainContent = document.getElementById('main-content');
@@ -1044,6 +1064,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return iframe;
     }
 
+    // Função para verificar se é a página de perfil
+    function isProfilePage(url) {
+        return url.includes('perfil.html') || url.includes('/user/@me');
+    }
+
+    // Função para carregar a página diretamente (sem iframe)
+    function loadDirectPage(url) {
+        window.location.href = url;
+    }
+
     // Função para extrair o nome da página e parâmetros da URL
     function getPageFromUrl() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -1059,6 +1089,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Função para carregar uma nova página
     function loadPage(pageName) {
+        // Se for a página de perfil, carrega diretamente
+        if (isProfilePage(pageName)) {
+            return loadDirectPage(pageName);
+        }
+
         // Remove o iframe anterior se existir
         if (currentIframe) {
             currentIframe.remove();
@@ -1095,7 +1130,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Para outras páginas, verifica se tem parâmetros adicionais
             const userParam = urlParams.get('user');
             if (pageParam === 'perfil' && userParam) {
-                loadPage(`perfil.html?user=${userParam}`);
+                // Se for perfil, redireciona diretamente
+                loadDirectPage(`perfil.html?user=${userParam}`);
             } else {
                 loadPage(`${pageParam}.html`);
             }
@@ -1107,6 +1143,11 @@ document.addEventListener('DOMContentLoaded', function() {
         link.addEventListener('click', function(event) {
             event.preventDefault();
             const iframeUrl = this.getAttribute('data-iframe');
+            
+            // Se for o link do perfil, carrega diretamente
+            if (isProfilePage(iframeUrl)) {
+                return loadDirectPage(iframeUrl);
+            }
             
             // Se o link for para o feed, remove os parâmetros da URL
             if (iframeUrl === 'feed.html') {
@@ -1122,6 +1163,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const pageParam = urlParams.get('page');
         const pageName = pageParam || 'feed';
+        
+        // Se for a página de perfil, não faz nada (já foi redirecionado)
+        if (isProfilePage(pageName)) return;
+        
         loadPage(pageName);
     });
 
@@ -1161,11 +1206,6 @@ window.addEventListener('message', function(event) {
   }
 });
   </script>
-
-  <script>
-    function generateProfileUrl(userHandle) {
-      return `/user/${userHandle}`;
-    }
-  </script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>

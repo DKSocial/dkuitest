@@ -15,10 +15,7 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 
 // Elementos DOM
-const languageSelect = document.getElementById('languageSelect');
 const themeOptions = document.querySelectorAll('.theme-option');
-const pushNotifications = document.getElementById('pushNotifications');
-const emailNotifications = document.getElementById('emailNotifications');
 const privateAccount = document.getElementById('privateAccount');
 const showLocation = document.getElementById('showLocation');
 const deactivateAccountBtn = document.getElementById('deactivateAccount');
@@ -45,25 +42,12 @@ const loadUserSettings = async () => {
     const userData = userDoc.data();
 
     if (userData.settings) {
-      // Idioma
-      if (userData.settings.language) {
-        languageSelect.value = userData.settings.language;
-      }
-
       // Tema
       if (userData.settings.theme) {
-        document.body.classList.toggle('dark-theme', userData.settings.theme === 'dark');
+        applyTheme(userData.settings.theme);
         themeOptions.forEach(option => {
           option.classList.toggle('active', option.dataset.theme === userData.settings.theme);
         });
-      }
-
-      // Notificações
-      if (userData.settings.pushNotifications !== undefined) {
-        pushNotifications.checked = userData.settings.pushNotifications;
-      }
-      if (userData.settings.emailNotifications !== undefined) {
-        emailNotifications.checked = userData.settings.emailNotifications;
       }
 
       // Privacidade
@@ -94,21 +78,10 @@ const saveSettings = async (settings) => {
 };
 
 // Event Listeners
-languageSelect.addEventListener('change', async () => {
-  const userDoc = await db.collection('users').doc(currentUser.uid).get();
-  const userData = userDoc.data();
-  const currentSettings = userData.settings || {};
-  
-  await saveSettings({
-    ...currentSettings,
-    language: languageSelect.value
-  });
-});
-
 themeOptions.forEach(option => {
   option.addEventListener('click', async () => {
     const theme = option.dataset.theme;
-    document.body.classList.toggle('dark-theme', theme === 'dark');
+    applyTheme(theme);
     
     themeOptions.forEach(opt => opt.classList.remove('active'));
     option.classList.add('active');
@@ -121,29 +94,6 @@ themeOptions.forEach(option => {
       ...currentSettings,
       theme: theme
     });
-  });
-});
-
-// Notificações
-pushNotifications.addEventListener('change', async () => {
-  const userDoc = await db.collection('users').doc(currentUser.uid).get();
-  const userData = userDoc.data();
-  const currentSettings = userData.settings || {};
-  
-  await saveSettings({
-    ...currentSettings,
-    pushNotifications: pushNotifications.checked
-  });
-});
-
-emailNotifications.addEventListener('change', async () => {
-  const userDoc = await db.collection('users').doc(currentUser.uid).get();
-  const userData = userDoc.data();
-  const currentSettings = userData.settings || {};
-  
-  await saveSettings({
-    ...currentSettings,
-    emailNotifications: emailNotifications.checked
   });
 });
 

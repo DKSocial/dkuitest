@@ -35,6 +35,19 @@
             box-sizing: border-box;
         }
 
+                .verified-icon {
+            width: 22px;
+            height: 22px;
+            margin-left: 5px;
+            vertical-align: middle;
+            fill: #9F7AEA;
+            transition: fill 0.3s ease;
+        }
+
+        .verified-icon:hover {
+            fill: #B794F4;
+        }
+
         body {
             background: linear-gradient(to bottom, #FAF5FF, #E9D8FD);
             color: #4A148C;
@@ -286,19 +299,6 @@
             height: 20px;
         }
 
-        .verified-icon {
-            width: 22px;
-            height: 22px;
-            margin-left: 5px;
-            vertical-align: middle;
-            fill: #9F7AEA;
-            transition: fill 0.3s ease;
-        }
-
-        .verified-icon:hover {
-            fill: #B794F4;
-        }
-
         .media-preview {
             width: 100%;
             max-width: 500px;
@@ -480,9 +480,6 @@
                         <button class="tweet__action" data-action="retweet" data-tweet-id="${tweet.id}" title="Repostar">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-repeat-2"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg> ${tweet.retweets}
                         </button>
-                        <button class="tweet__action" data-action="comment" data-tweet-id="${tweet.id}" title="Comentar">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-more"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg> (${tweet.comments.length})
-                        </button>
                         <button class="tweet__action" data-action="share" data-tweet-id="${tweet.id}" title="Compartilhar">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
                         </button>
@@ -586,14 +583,6 @@
                             const shareUrl = `${window.location.origin}/feed/posts/${tweetId}`;
                             await navigator.clipboard.writeText(shareUrl);
                             showToast('Link copiado para a área de transferência!');
-                            break;
-
-                        case 'retweet':
-                            // Implementar lógica de retweet
-                            break;
-
-                        case 'comment':
-                            // Implementar lógica de comentários
                             break;
                     }
 

@@ -5,8 +5,12 @@
       "destination": "/feed/posts/[id].html"
     },
     {
-      "source": "/user/:userhandle",
-      "destination": "/feed/perfil.html"
+      "source": "/user/:handle",
+      "destination": "/user/[handle].html"
+    },
+    {
+      "source": "/mobile-login/:sessionId",
+      "destination": "/log/mobile-login/[sessionId].html"
     }
   ]
 } 

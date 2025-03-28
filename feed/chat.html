@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DK - Chat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+/* Estilos globais */
+* {
+  font-family: 'Google Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(to bottom, #FAF5FF, #E9D8FD);
+  color: #4A148C;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Container principal do chat */
+.chat-container {
+  display: flex;
+  width: 100%;
+  background-color: #FAF5FF;
+  border: 1px solid #B794F4;
+  overflow: hidden;
+  position: relative; /* Necessário para posicionar a sidebar e o chat */
+}
+
+/* Lista de conversas */
+.conversation-list {
+  width: 30%;
+  border-right: 1px solid #B794F4;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+}
+
+.conversation-list-header {
+  padding: 20px;
+  border-bottom: 1px solid #B794F4;
+}
+
+.conversation-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #B794F4;
+  cursor: pointer;
+}
+
+.conversation-item img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.conversation-info h3 {
+  font-size: 16px;
+  color: #4A148C;
+}
+
+.conversation-info p {
+  font-size: 14px;
+  color: #6B46C1;
+}
+
+/* Botão de nova conversa */
+.new-chat-btn {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(45deg, #9F7AEA, #5728a8);
+  color: #FAF5FF;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.new-chat-btn:hover {
+  background: linear-gradient(45deg, #5728a8, #9F7AEA);
+}
+
+/* Área de chat */
+.chat-area {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #B794F4;
+}
+
+.chat-header img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.chat-header h3 {
+  font-size: 18px;
+  color: #4A148C;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilo da mensagem */
+.message {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 10px;
+  max-width: 100%;
+}
+
+.message.received {
+  align-self: flex-start;
+}
+
+.message.sent {
+  align-self: flex-end;
+}
+
+.message img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.message-content {
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.message.received .message-content {
+  background-color: #E9D8FD;
+  color: #4A148C;
+}
+
+.message.sent .message-content {
+  background-color: #9F7AEA;
+  color: #FAF5FF;
+}
+
+.message small {
+  font-size: 0.8rem;
+  color: #6B46C1;
+  margin-top: 5px;
+  display: block;
+}
+
+.chat-input {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #B794F4;
+  background-color: #FAF5FF; /* Adicionado para garantir visibilidade */
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #B794F4;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+.chat-input button {
+  background: linear-gradient(45deg, #9F7AEA, #5728a8);
+  color: #FAF5FF;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.chat-input button:hover {
+  background: linear-gradient(45deg, #5728a8, #9F7AEA);
+}
+
+/* Botão de voltar */
+.back-button {
+  display: none;
+  background: none;
+  border: none;
+  color: #4A148C;
+  font-size: 16px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+/* Responsividade para celular */
+@media (max-width: 1028px) {
+  .conversation-list {
+    width: 100%;
+    position: absolute; /* Remove a sidebar do fluxo do layout */
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #FAF5FF; /* Mantém o fundo da sidebar */
+    z-index: 10; /* Garante que a sidebar fique acima do chat */
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+  }
+
+  .chat-area {
+    width: 100%;
+    position: absolute; /* Remove o chat do fluxo do layout */
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #FAF5FF; /* Mantém o fundo do chat */
+    z-index: 9999; /* Garante que o chat fique abaixo da sidebar */
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .chat-area.visible {
+    transform: translateX(0);
+  }
+
+  .conversation-list.hidden {
+    transform: translateX(-100%);
+  }
+
+  .back-button {
+    display: inline-block;
+  }
+
+  .chat-input {
+    position: fixed; /* Fixa o input na parte inferior */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #FAF5FF; /* Garante que o input seja visível */
+    z-index: 10000; /* Garante que o input fique acima de outros elementos */
+  }
+  /* Container principal do chat */
+.chat-container {
+  display: flex;
+  width: 100%;
+  background-color: #FAF5FF;
+  border: 1px solid #B794F4;
+  overflow: hidden;
+  min-height: 100dvh;
+  position: relative; /* Necessário para posicionar a sidebar e o chat */
+}
+}
+
+@media (max-width: 1028px) {
+
+* {
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+ }
+}
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <!-- Lista de conversas -->
+    <div class="conversation-list" id="conversation-list">
+      <div class="conversation-list-header">
+        <h2>Conversas</h2>
+        <button class="new-chat-btn" onclick="startNewChat()">Nova Conversa</button>
+      </div>
+      <div id="conversations-list">
+        <!-- Conversas serão carregadas aqui -->
+      </div>
+    </div>
+
+    <!-- Área de chat -->
+    <div class="chat-area" id="chat-area">
+      <div class="chat-header">
+        <button class="back-button" onclick="goBackToList()"><strong>←</strong></button>
+        <img id="chat-header-avatar" src="https://via.placeholder.com/50" alt="User">
+        <h3 id="chat-header">Selecione uma conversa</h3>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <!-- Mensagens serão exibidas aqui -->
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chat-input" placeholder="Digite uma mensagem...">
+        <button onclick="sendMessage()">Enviar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script>
+// Configuração do Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyA_d2rRI7GWGvrcGq4KuiZiVhWAKWAkFjQ",
+  authDomain: "dksocialbr.firebaseapp.com",
+  projectId: "dksocialbr",
+  storageBucket: "dksocialbr.appspot.com",
+  messagingSenderId: "920583441447",
+  appId: "1:920583441447:web:5a28bc09a21cbeaa679202",
+  measurementId: "G-WDP6ME7D1P"
+};
+
+// Inicializa o Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Variáveis globais
+let currentUser = null;
+let currentConversationId = null;
+let messageListener = null;
+
+// Função para buscar o nome de usuário e a foto de perfil
+async function getUserData(uid) {
+  const userDoc = await db.collection("users").doc(uid).get();
+  if (userDoc.exists) {
+    return userDoc.data();
+  } else {
+    return { username: "Usuário Desconhecido", profilePicture: "https://via.placeholder.com/50" };
+  }
+}
+
+// Função para buscar o ID do usuário pelo username
+async function getUserIdByUsername(username) {
+  const usersRef = db.collection("users");
+  const query = usersRef.where("username", "==", username).limit(1);
+  const querySnapshot = await query.get();
+
+  if (!querySnapshot.empty) {
+    return querySnapshot.docs[0].id; // Retorna o ID do usuário
+  } else {
+    throw new Error("Usuário não encontrado.");
+  }
+}
+
+// Função para esconder a sidebar no celular
+function hideSidebar() {
+  if (window.innerWidth <= 1028) { // Verifica se é celular
+    const sidebar = window.parent.document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.style.display = 'none'; // Esconde a sidebar
+    }
+  }
+}
+
+// Função para mostrar a sidebar no celular
+function showSidebar() {
+  if (window.innerWidth <= 1028) { // Verifica se é celular
+    const sidebar = window.parent.document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.style.display = 'flex'; // Mostra a sidebar (ou o valor original, como 'block')
+    }
+  }
+}
+
+// Função para iniciar uma nova conversa
+async function startNewChat() {
+  if (!currentUser) {
+    alert("Por favor, faça login antes de iniciar uma nova conversa.");
+    return;
+  }
+
+  const username = prompt("Digite o username do usuário para iniciar uma nova conversa:");
+  if (username) {
+    try {
+      const participantId = await getUserIdByUsername(username); // Busca o ID do usuário pelo username
+      const participants = [currentUser.uid, participantId];
+
+      // Cria uma nova conversa
+      db.collection("conversations")
+        .add({ participants, isGroup: false })
+        .then((docRef) => {
+          alert(`Nova conversa criada com ${username}`);
+          openConversation(docRef.id);
+        })
+        .catch((error) => {
+          alert("Erro ao criar conversa: " + error.message);
+        });
+    } catch (error) {
+      alert(error.message); // Exibe mensagem de erro se o usuário não for encontrado
+    }
+  }
+}
+
+// Função para carregar conversas
+async function loadConversations() {
+  db.collection("conversations")
+    .where("participants", "array-contains", currentUser.uid)
+    .onSnapshot(async (snapshot) => {
+      const conversationsList = document.getElementById("conversations-list");
+      conversationsList.innerHTML = "";
+
+      for (const doc of snapshot.docs) {
+        const conversation = doc.data();
+        const displayName = await getConversationName(conversation);
+        const lastMessage = await getLastMessage(doc.id);
+        const otherUserId = conversation.participants.find(uid => uid !== currentUser.uid);
+        const otherUserData = await getUserData(otherUserId);
+
+        const li = document.createElement("div");
+        li.className = "conversation-item";
+        li.innerHTML = `
+          <img src="${otherUserData.profilePicture}" alt="User">
+          <div class="conversation-info">
+            <h3>${displayName}</h3>
+            <p>${lastMessage}</p>
+          </div>
+        `;
+        li.addEventListener("click", () => openConversation(doc.id));
+        conversationsList.appendChild(li);
+      }
+    });
+}
+
+// Função para obter a última mensagem de uma conversa
+async function getLastMessage(conversationId) {
+  const messages = await db.collection("conversations")
+    .doc(conversationId)
+    .collection("messages")
+    .orderBy("timestamp", "desc")
+    .limit(1)
+    .get();
+
+  if (!messages.empty) {
+    return messages.docs[0].data().text;
+  } else {
+    return "Nenhuma mensagem ainda";
+  }
+}
+
+// Função para marcar mensagens como lidas
+async function markMessagesAsRead(conversationId) {
+  const messagesRef = db.collection("conversations")
+    .doc(conversationId)
+    .collection("messages");
+
+  const querySnapshot = await messagesRef
+    .where("sender", "!=", currentUser.uid) // Apenas mensagens de outros usuários
+    .where("read", "==", false) // Apenas mensagens não lidas
+    .get();
+
+  querySnapshot.forEach((doc) => {
+    messagesRef.doc(doc.id).update({ read: true }); // Marca como lida
+  });
+}
+
+// Função para abrir uma conversa
+async function openConversation(conversationId) {
+  if (messageListener) {
+    messageListener(); // Desativa o listener anterior
+  }
+
+  currentConversationId = conversationId;
+
+  // Marca as mensagens como lidas
+  await markMessagesAsRead(conversationId);
+
+  // Atualiza o cabeçalho da conversa
+  const conversation = await db.collection("conversations").doc(conversationId).get();
+  const displayName = await getConversationName(conversation.data());
+  const chatHeader = document.getElementById("chat-header");
+  chatHeader.textContent = displayName;
+
+  // Atualiza a foto de perfil no cabeçalho
+  const participants = conversation.data().participants;
+  const otherUserId = participants.find(uid => uid !== currentUser.uid);
+  const otherUserData = await getUserData(otherUserId);
+  const chatHeaderAvatar = document.getElementById("chat-header-avatar");
+  chatHeaderAvatar.src = otherUserData.profilePicture;
+
+  // Limpa as mensagens anteriores
+  const chatMessages = document.getElementById("chat-messages");
+  chatMessages.innerHTML = "";
+
+  // Listener para novas mensagens
+  messageListener = db.collection("conversations")
+    .doc(conversationId)
+    .collection("messages")
+    .orderBy("timestamp")
+    .onSnapshot((querySnapshot) => {
+      let unreadCount = 0;
+      querySnapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          const message = change.doc.data();
+          displayMessage(message);
+
+          // Conta apenas mensagens não lidas enviadas por outros usuários
+          if (message.sender !== currentUser.uid && !message.read) {
+            unreadCount++;
+          }
+        }
+      });
+
+      // Envia o número de mensagens não lidas para o index.html
+      if (unreadCount > 0) {
+        window.parent.postMessage({ type: 'newMessage', count: unreadCount }, '*');
+      }
+
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+
+  // Exibe a área de chat e esconde a lista de conversas no celular
+  document.getElementById("chat-area").classList.add("visible");
+  document.getElementById("conversation-list").classList.add("hidden");
+  hideSidebar();
+}
+
+// Função para exibir uma mensagem
+async function displayMessage(message) {
+  const chatMessages = document.getElementById("chat-messages");
+  const messageElement = document.createElement("div");
+  messageElement.className = `message ${message.sender === currentUser.uid ? "sent" : "received"}`;
+
+  const userData = await getUserData(message.sender);
+  const timestamp = message.timestamp?.toDate();
+  const timeString = timestamp ? timestamp.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "Agora";
+
+  messageElement.innerHTML = `
+    <img src="${userData.profilePicture}" alt="User">
+    <div class="message-content">
+      <p>${message.text}</p>
+      <small>${timeString}</small>
+    </div>
+  `;
+  chatMessages.appendChild(messageElement);
+}
+
+// Função para enviar uma mensagem
+async function sendMessage() {
+  const input = document.getElementById("chat-input");
+  const text = input.value.trim();
+
+  if (text && currentConversationId) {
+    await db.collection("conversations")
+      .doc(currentConversationId)
+      .collection("messages")
+      .add({
+        sender: currentUser.uid,
+        text: text,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        read: false, // Mensagem não lida por padrão
+      });
+
+    input.value = "";
+  }
+}
+
+// Função para voltar à lista de conversas (celular)
+function goBackToList() {
+  document.getElementById("chat-area").classList.remove("visible");
+  document.getElementById("conversation-list").classList.remove("hidden");
+  showSidebar();
+}
+
+// Autenticação do usuário
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    currentUser = user;
+    loadConversations();
+  } else {
+    alert("Por favor, faça login para usar o chat.");
+    window.location.href = "/Log/";
+  }
+});
+
+// Função para obter o nome da conversa
+async function getConversationName(conversation) {
+  if (conversation.isGroup && conversation.name) {
+    return conversation.name; // Retorna o nome do grupo, se existir
+  } else {
+    // Se não for um grupo, retorna os nomes dos participantes
+    const participants = conversation.participants;
+    const participantNames = await Promise.all(
+      participants.map(async (uid) => {
+        if (uid !== currentUser.uid) {
+          const userData = await getUserData(uid);
+          return userData.username;
+        }
+      })
+    );
+
+    // Filtra valores undefined e junta os nomes
+    return participantNames.filter(Boolean).join(", ");
+  }
+}
+  </script>
+</body>
+</html>

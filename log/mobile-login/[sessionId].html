@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DK - Login Mobile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Google Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #F5E6FE, #E3D1F4);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        h1 {
+            color: #7A4DA1;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #B58ED2;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #4B286D;
+            background-color: #DEC9F2;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #CBA6E0;
+        }
+
+        .button img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            color: #7A4DA1;
+            display: none;
+        }
+
+        .status.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/logo.SVG" alt="DK Logo" class="logo">
+        <h1>Login no DK</h1>
+        <div id="status" class="status"></div>
+        <a class="button" href="#" id="google-login">
+            <img src="https://agenciapnz.com/wp-content/uploads/Logo-Google-G.png" alt="Google">
+            Entrar com Google
+        </a>
+        <a class="button" href="#" id="github-login">
+            <img src="https://icones.pro/wp-content/uploads/2021/06/icone-github-grise.png" alt="GitHub">
+            Entrar com GitHub
+        </a>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script type="module" src="./mobile-auth.js"></script>
+</body>
+</html> 

@@ -26,8 +26,12 @@ const state = {
 const utils = {
   getUserHandleFromURL() {
     try {
-      const pathParts = window.location.pathname.split('/');
-      const userHandle = pathParts[pathParts.length - 1];
+      // Tenta obter o userHandle da URL do iframe
+      const iframeUrl = window.location.href;
+      console.log('URL do iframe:', iframeUrl);
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const userHandle = urlParams.get('user');
       console.log('UserHandle da URL:', userHandle);
       return userHandle;
     } catch (error) {
@@ -60,9 +64,9 @@ const utils = {
   },
 
   generateProfileUrl(userHandle) {
-    // Gera a URL completa do perfil usando o novo formato
+    // Gera a URL completa do perfil
     const baseUrl = window.location.origin;
-    const profileUrl = `${baseUrl}/user/${userHandle}`;
+    const profileUrl = `${baseUrl}/feed/?page=perfil&user=${userHandle}`;
     return profileUrl;
   }
 };

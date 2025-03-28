@@ -10,13 +10,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link href="./index.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="left">
-            <img alt="Logotipo" class="logo" src="/logo.SVG">
+            <div class="qr-container">
+                <h3>Acesse pelo celular</h3>
+                <div id="qrcode"></div>
+                <p>Escaneie o QR code para fazer login</p>
+            </div>
         </div>
         <div class="right">
             <h1>Conecte-se ao DK<br>e explore um mundo de possibilidades.</h1>
@@ -108,5 +113,6 @@
 
     <!-- Importação do arquivo JavaScript -->
     <script type="module" src="./OAuth/Firebase/DK/script.js"></script>
+    <script type="module" src="./OAuth/Firebase/DK/qr-code.js"></script>
 </body>
 </html>

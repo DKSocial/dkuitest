@@ -1,0 +1,92 @@
+/* Estilos para polls integradas com tweets */
+.poll-tweet {
+  background-color: #f8f9fa;
+  border-left: 4px solid #9b59b6;
+}
+
+.tweet__question {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.tweet__poll-status {
+  margin-bottom: 1rem;
+}
+
+.poll-status {
+  font-size: 0.9em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.poll-status.active {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.poll-status.ended {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.tweet__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.tweet__option {
+  background-color: white;
+  border-radius: 8px;
+  padding: 0.8rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.tweet__option-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.tweet__option-text {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.tweet__option-votes {
+  font-size: 0.9em;
+  color: #7f8c8d;
+}
+
+.tweet__option-progress {
+  height: 8px;
+  background-color: #ecf0f1;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.tweet__option-progress-bar {
+  height: 100%;
+  background-color: #9b59b6;
+  transition: width 0.3s ease;
+}
+
+.tweet__vote-button {
+  background-color: #9b59b6;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+}
+
+.tweet__vote-button:hover {
+  background-color: #8e44ad;
+} 

@@ -45,17 +45,6 @@
         overflow: hidden;
         color: #4A148C;
     }
-
-    @media (max-width: 720px) {
-
-* {
-    user-select: none;
-    -webkit-user-select: none;
-    cursor: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
-}
     
     .container {
         display: flex;
@@ -87,7 +76,7 @@
     }
     
     .main-content {
-        width: 70%;
+        width: 100%;
         padding: 20px;
         overflow-y: auto;
         display: flex;
@@ -1663,16 +1652,6 @@ body.dark-theme {
         <!-- Os tweets serão inseridos aqui dinamicamente -->
       </div>
     </div>
-
-    <div class="trending">
-      <div class="search-bar">
-        <input type="text" id="search" placeholder="Pesquisar posts, @usuários ou #hashtags..." title="Pesquisar no DK">
-      </div>
-      <div class="trending-hashtags" id="trending-hashtags">
-        <h2>O que está acontecendo</h2>
-        <!-- As hashtags mais usadas serão renderizadas aqui dinamicamente -->
-      </div>
-    </div>
   </div>
 
   <div id="commentsModal" class="modal">
@@ -1868,10 +1847,6 @@ function loadTheme() {
 
 // Executa a função ao carregar a página
 window.onload = loadTheme;
-
-function generateProfileUrl(userHandle) {
-  return `/user/${userHandle}`;
-}
   </script>
 </body>
 </html>

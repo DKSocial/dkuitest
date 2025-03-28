@@ -105,7 +105,7 @@ const setupEventListeners = () => {
     } else if (e.target.classList.contains('mention')) {
       e.preventDefault();
       const username = e.target.textContent.slice(1);
-      window.location.href = `/Perfil/?user=${username}`;
+      window.location.href = `/user/@${username}`;
     }
   });
 
@@ -201,7 +201,7 @@ const postTweet = async () => {
       sponsored: false,
       userId: currentUser.uid,
       username: userData.username || 'Usuário Anônimo',
-      userHandle: userData.userHandle || '@zuser.dksocial.space',
+      userHandle: userData.userHandle || 'user.dksocial.space',
       profilePicture: userData.profilePicture || 'https://i.pinimg.com/736x/62/01/0d/62010d848b790a2336d1542fcda51789.jpg',
       verified: userData.verified === true,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -219,19 +219,49 @@ const postTweet = async () => {
 };
 
 const loadTweets = () => {
-  let query = db.collection('tweets').orderBy('timestamp', 'desc');
+  let tweetsQuery = db.collection('tweets').orderBy('timestamp', 'desc');
+  let pollsQuery = db.collection('polls').orderBy('timestamp', 'desc');
+  
   if (currentHashtagFilter) {
-    query = query.where('hashtags', 'array-contains', currentHashtagFilter);
+    tweetsQuery = tweetsQuery.where('hashtags', 'array-contains', currentHashtagFilter);
   }
-  query.onSnapshot(snapshot => {
-    tweetsContainer.innerHTML = '';
-    hashtagsMap.clear();
+
+  // Carregar tweets
+  tweetsQuery.onSnapshot(snapshot => {
+    const tweets = [];
     snapshot.forEach(doc => {
-      const tweet = { id: doc.id, ...doc.data() };
-      renderTweet(tweet);
+      const tweet = { id: doc.id, type: 'tweet', ...doc.data() };
+      tweets.push(tweet);
       updateHashtags(tweet.hashtags);
     });
-    renderTrendingHashtags();
+
+    // Carregar polls
+    pollsQuery.onSnapshot(pollsSnapshot => {
+      const polls = [];
+      pollsSnapshot.forEach(doc => {
+        const poll = { id: doc.id, type: 'poll', ...doc.data() };
+        polls.push(poll);
+      });
+
+      // Combinar tweets e polls em uma única timeline ordenada por timestamp
+      const timeline = [...tweets, ...polls].sort((a, b) => {
+        const timeA = a.timestamp?.toDate() || new Date(0);
+        const timeB = b.timestamp?.toDate() || new Date(0);
+        return timeB - timeA;
+      });
+
+      // Limpar e renderizar a timeline
+      tweetsContainer.innerHTML = '';
+      hashtagsMap.clear();
+      timeline.forEach(item => {
+        if (item.type === 'tweet') {
+          renderTweet(item);
+        } else {
+          renderPoll(item);
+        }
+      });
+      renderTrendingHashtags();
+    });
   });
 };
 
@@ -247,7 +277,7 @@ const renderTweet = (tweet) => {
     <div class="tweet__header">
       <img src="${tweet.profilePicture || 'https://i.pinimg.com/736x/62/01/0d/62010d848b790a2336d1542fcda51789.jpg'}" 
            class="tweet__profile-pic" alt="Foto do perfil">
-      <a href="./perfil.html?user=${tweet.userHandle}" class="tweet__username">${tweet.username}</a>
+     <a href="/user/@${tweet.userHandle}" class="tweet__username" target="_top">${tweet.username}</a>
       ${tweet.verified === true ? `
         <svg class="verified-icon" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="10" fill="none" stroke="#9b59b6" stroke-width="2" stroke-dasharray="4,4" />
@@ -300,7 +330,7 @@ const getPlatform = () => {
   } else if (/android/i.test(userAgent)) {
     return /wv/i.test(userAgent) ? 'Android | DKLite' : 'Android | DK';
   } else if (/linux/i.test(userAgent)) {
-    return 'Linux | DKWeb';
+    return 'Android | DKLite';
   } else {
     return 'Outro';
   }
@@ -683,7 +713,7 @@ const loadPolls = () => {
 // Renderiza uma poll na interface
 const renderPoll = (poll) => {
   const pollElement = document.createElement('div');
-  pollElement.className = 'tweet';
+  pollElement.className = 'tweet poll-tweet';
   const timestamp = poll.timestamp ? poll.timestamp.toDate().toLocaleString() : '';
   const endDate = poll.endDate ? poll.endDate.toDate() : null;
   const isActive = poll.isActive && endDate && endDate > new Date();
@@ -702,7 +732,7 @@ const renderPoll = (poll) => {
     <div class="tweet__header">
       <img src="${poll.profilePicture || 'https://i.pinimg.com/736x/62/01/0d/62010d848b790a2336d1542fcda51789.jpg'}" 
            class="tweet__profile-pic" alt="Foto do perfil">
-      <a href="./perfil.html?user=${poll.userHandle || poll.username}" class="tweet__username">${poll.username}</a>
+      <a href="/feed/user/@${poll.userHandle || poll.username}" class="tweet__username">${poll.username}</a>
       ${poll.verified === true ? `
         <svg class="verified-icon" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="10" fill="none" stroke="#9b59b6" stroke-width="2" stroke-dasharray="4,4" />
@@ -747,10 +777,13 @@ const renderPoll = (poll) => {
     </div>
     <div class="tweet__actions">
       <button class="tweet__action" data-action="like" data-poll-id="${poll.id}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-up"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg> ${poll.likes}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg> ${poll.likes}
       </button>
       <button class="tweet__action" data-action="comment" data-poll-id="${poll.id}">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-more"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg> (${poll.comments.length})
+      </button>
+      <button class="tweet__action" data-action="share" data-poll-id="${poll.id}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
       </button>
       <button class="tweet__action" data-action="report" data-poll-id="${poll.id}">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-warning"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v2"/><path d="M12 13h.01"/></svg>
@@ -762,7 +795,7 @@ const renderPoll = (poll) => {
       ` : ''}
     </div>
   `;
-  pollsContainer.appendChild(pollElement);
+  tweetsContainer.appendChild(pollElement);
 };
 
 // Lida com as ações na poll (votar, curtir e comentar)
