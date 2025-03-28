@@ -1,12 +1,12 @@
-// Configuração do Firebase
 const firebaseConfig = {
-    // Suas configurações do Firebase aqui
-    apiKey: "sua-api-key",
-    authDomain: "seu-auth-domain",
-    projectId: "seu-project-id",
-    storageBucket: "seu-storage-bucket",
-    messagingSenderId: "seu-messaging-sender-id",
-    appId: "seu-app-id"
+    apiKey: "AIzaSyA_d2rRI7GWGvrcGq4KuiZiVhWAKWAkFjQ",
+    authDomain: "dksocialbr.firebaseapp.com",
+    databaseURL: "https://dksocialbr-default-rtdb.firebaseio.com",
+    projectId: "dksocialbr",
+    storageBucket: "dksocialbr.firebasestorage.app",
+    messagingSenderId: "920583441447",
+    appId: "1:920583441447:web:5a28bc09a21cbeaa679202",
+    measurementId: "G-WDP6ME7D1P"
 };
 
 // Inicializar Firebase

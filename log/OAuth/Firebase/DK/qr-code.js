@@ -26,7 +26,7 @@ function checkMobileLogin() {
             // Login bem-sucedido
             const userData = doc.data().user;
             
-            // Atualizar o estado do usuário no Firebase Auth
+            // Fazer login com os dados do usuário
             firebase.auth().signInWithCustomToken(userData.uid).then(() => {
                 window.location.href = '/feed'; // Redirecionar para o feed
             }).catch((error) => {
