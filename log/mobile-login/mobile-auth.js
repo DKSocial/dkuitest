@@ -19,8 +19,14 @@ const sessionId = window.location.pathname.split('/').pop();
 
 // Elementos da UI
 const statusElement = document.getElementById('status');
-const googleButton = document.getElementById('google-login');
-const githubButton = document.getElementById('github-login');
+const confirmButton = document.getElementById('confirm-login');
+const userInfo = document.getElementById('user-info');
+const userPhoto = document.getElementById('user-photo');
+const userName = document.getElementById('user-name');
+const deviceType = document.getElementById('device-type');
+const browser = document.getElementById('browser');
+const locationText = document.getElementById('location');
+const locationMap = document.getElementById('location-map');
 
 // Função para obter informações do dispositivo
 function getDeviceInfo() {
@@ -28,7 +34,7 @@ function getDeviceInfo() {
         userAgent: navigator.userAgent,
         platform: navigator.platform,
         language: navigator.language,
-        deviceType: /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(navigator.userAgent) ? 'mobile' : 'desktop',
+        deviceType: /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(navigator.userAgent) ? 'Celular' : 'Computador',
         browser: navigator.userAgent.match(/(firefox|msie|chrome|safari|opera|edge)\/?\s*([\d.]+)/i)?.[1] || 'unknown'
     };
 }
@@ -39,6 +45,10 @@ async function getLocation() {
         const position = await new Promise((resolve, reject) => {
             navigator.geolocation.getCurrentPosition(resolve, reject);
         });
+        
+        // Criar mapa com a localização
+        const mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${position.coords.latitude},${position.coords.longitude}&zoom=15`;
+        locationMap.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0" src="${mapUrl}" allowfullscreen></iframe>`;
         
         return {
             latitude: position.coords.latitude,
@@ -51,19 +61,55 @@ async function getLocation() {
     }
 }
 
+// Função para atualizar a UI com as informações
+async function updateUI() {
+    const deviceInfo = getDeviceInfo();
+    const location = await getLocation();
+    
+    // Atualizar informações do dispositivo
+    deviceType.textContent = deviceInfo.deviceType;
+    browser.textContent = deviceInfo.browser;
+    
+    if (location) {
+        locationText.textContent = `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`;
+    } else {
+        locationText.textContent = 'Não disponível';
+    }
+    
+    // Verificar se há usuário logado
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+        userInfo.style.display = 'flex';
+        userPhoto.src = currentUser.photoURL || '/default-avatar.png';
+        userName.textContent = currentUser.displayName || currentUser.email;
+        
+        // Habilitar botão de confirmação
+        confirmButton.disabled = false;
+    } else {
+        statusElement.textContent = 'Você precisa estar logado para continuar.';
+        statusElement.classList.add('active');
+        confirmButton.disabled = true;
+    }
+}
+
 // Função para atualizar o status no Firestore
-async function updateLoginStatus(userData) {
+async function updateLoginStatus() {
     try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            throw new Error('Usuário não está logado');
+        }
+        
         const deviceInfo = getDeviceInfo();
         const location = await getLocation();
         
         await db.collection('mobileLogins').doc(sessionId).set({
-            status: 'pending',
+            status: 'completed',
             user: {
-                uid: userData.uid,
-                email: userData.email,
-                displayName: userData.displayName,
-                photoURL: userData.photoURL
+                uid: currentUser.uid,
+                email: currentUser.email,
+                displayName: currentUser.displayName,
+                photoURL: currentUser.photoURL
             },
             device: {
                 ...deviceInfo,
@@ -72,12 +118,9 @@ async function updateLoginStatus(userData) {
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         
-        statusElement.textContent = 'Aguarde a confirmação no seu dispositivo...';
+        statusElement.textContent = 'Login confirmado! Você pode fechar esta página.';
         statusElement.classList.add('active');
-        
-        // Desabilitar botões após login
-        googleButton.style.display = 'none';
-        githubButton.style.display = 'none';
+        confirmButton.disabled = true;
     } catch (error) {
         console.error('Erro ao atualizar status:', error);
         statusElement.textContent = 'Erro ao processar login. Tente novamente.';
@@ -85,40 +128,17 @@ async function updateLoginStatus(userData) {
     }
 }
 
-// Login com Google
-googleButton.addEventListener('click', async (e) => {
-    e.preventDefault();
-    try {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        const result = await auth.signInWithPopup(provider);
-        await updateLoginStatus(result.user);
-    } catch (error) {
-        console.error('Erro no login com Google:', error);
-        statusElement.textContent = 'Erro no login com Google. Tente novamente.';
-        statusElement.classList.add('active');
-    }
-});
-
-// Login com GitHub
-githubButton.addEventListener('click', async (e) => {
-    e.preventDefault();
-    try {
-        const provider = new firebase.auth.GithubAuthProvider();
-        const result = await auth.signInWithPopup(provider);
-        await updateLoginStatus(result.user);
-    } catch (error) {
-        console.error('Erro no login com GitHub:', error);
-        statusElement.textContent = 'Erro no login com GitHub. Tente novamente.';
-        statusElement.classList.add('active');
-    }
-});
+// Evento do botão de confirmação
+confirmButton.addEventListener('click', updateLoginStatus);
 
 // Verificar se a sessão já foi usada
 db.collection('mobileLogins').doc(sessionId).get().then(doc => {
     if (doc.exists && doc.data().status === 'completed') {
         statusElement.textContent = 'Esta sessão já foi utilizada. Por favor, gere um novo QR code.';
         statusElement.classList.add('active');
-        googleButton.style.display = 'none';
-        githubButton.style.display = 'none';
+        confirmButton.disabled = true;
     }
-}); 
+});
+
+// Inicializar a UI
+updateUI(); 
