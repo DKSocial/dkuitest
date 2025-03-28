@@ -22,21 +22,57 @@ const statusElement = document.getElementById('status');
 const googleButton = document.getElementById('google-login');
 const githubButton = document.getElementById('github-login');
 
+// Função para obter informações do dispositivo
+function getDeviceInfo() {
+    return {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        deviceType: /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(navigator.userAgent) ? 'mobile' : 'desktop',
+        browser: navigator.userAgent.match(/(firefox|msie|chrome|safari|opera|edge)\/?\s*([\d.]+)/i)?.[1] || 'unknown'
+    };
+}
+
+// Função para obter localização
+async function getLocation() {
+    try {
+        const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+        
+        return {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy
+        };
+    } catch (error) {
+        console.error('Erro ao obter localização:', error);
+        return null;
+    }
+}
+
 // Função para atualizar o status no Firestore
 async function updateLoginStatus(userData) {
     try {
+        const deviceInfo = getDeviceInfo();
+        const location = await getLocation();
+        
         await db.collection('mobileLogins').doc(sessionId).set({
-            status: 'completed',
+            status: 'pending',
             user: {
                 uid: userData.uid,
                 email: userData.email,
                 displayName: userData.displayName,
                 photoURL: userData.photoURL
             },
+            device: {
+                ...deviceInfo,
+                location: location
+            },
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         
-        statusElement.textContent = 'Login realizado com sucesso! Você pode fechar esta página.';
+        statusElement.textContent = 'Aguarde a confirmação no seu dispositivo...';
         statusElement.classList.add('active');
         
         // Desabilitar botões após login
