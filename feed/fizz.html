@@ -207,7 +207,7 @@
   <div class="chat-container">
     <!-- Cabeçalho do chat -->
     <div class="chat-header">
-      <a href="/feed/" onclick="showSidebar()"><strong>←</strong></a>
+      <a href="#" onclick="parent.closeFizz()"><strong>←</strong></a>
       <img src="./fizz.png" alt="IA Assistente">
       <h3>Fizz 1.0 Flash</h3>
     </div>
@@ -237,12 +237,21 @@ Responda sempre em português do Brasil, com um tom animado e envolvente.
 Se apresente no início da conversa e mantenha sua personalidade em todas as respostas.
 Tente responder todas as mensagens de forma curta, mas se não der, só responda.`;
 
+// Histórico de conversas
+let conversationHistory = [];
+
 // Função para carregar mensagens salvas no localStorage
 function loadMessages() {
   const savedMessages = localStorage.getItem('chatMessages');
+  const savedHistory = localStorage.getItem('conversationHistory');
+  
   if (savedMessages) {
     const messages = JSON.parse(savedMessages);
     messages.forEach(msg => addMessage(msg.type, msg.text, msg.timestamp));
+  }
+  
+  if (savedHistory) {
+    conversationHistory = JSON.parse(savedHistory);
   }
 }
 
@@ -272,6 +281,10 @@ function saveMessage(type, text, timestamp) {
   const messages = savedMessages ? JSON.parse(savedMessages) : [];
   messages.push({ type, text, timestamp });
   localStorage.setItem('chatMessages', JSON.stringify(messages));
+  
+  // Adiciona ao histórico de conversas
+  conversationHistory.push({ role: type === 'sent' ? 'user' : 'assistant', content: text });
+  localStorage.setItem('conversationHistory', JSON.stringify(conversationHistory));
 }
 
 // Função para enviar mensagem para o Gemini
@@ -279,16 +292,19 @@ async function sendMessage() {
   const input = document.getElementById('chat-input');
   const message = input.value.trim();
 
-  if (!message) return; // Não enviar mensagens vazias
+  if (!message) return;
 
-  // Adiciona a mensagem do usuário ao chat
   const timestamp = new Date().toLocaleTimeString();
   addMessage('sent', message, timestamp);
   saveMessage('sent', message, timestamp);
-  input.value = ''; // Limpa o campo de entrada
+  input.value = '';
 
   try {
-    // Envia a mensagem para o Gemini com a personalidade do Fizz
+    // Prepara o contexto com o histórico de conversas
+    const context = conversationHistory.map(msg => 
+      `${msg.role === 'user' ? 'Usuário' : 'Fizz'}: ${msg.content}`
+    ).join('\n');
+
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
@@ -297,15 +313,13 @@ async function sendMessage() {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `${FIZZ_PERSONALITY}\n\nUsuário: ${message}`,
+            text: `${FIZZ_PERSONALITY}\n\nHistórico da conversa:\n${context}\n\nUsuário: ${message}`,
           }],
         }],
       }),
     });
 
     const data = await response.json();
-
-    // Adiciona a resposta do Gemini ao chat
     const geminiResponse = data.candidates[0].content.parts[0].text;
     const responseTimestamp = new Date().toLocaleTimeString();
     addMessage('received', geminiResponse, responseTimestamp);

@@ -118,6 +118,20 @@ const ui = {
     document.getElementById('editUserHandle').value = userData.userHandle || '';
     document.getElementById('editBio').value = userData.bio || '';
     document.getElementById('editProfilePicture').value = userData.profilePicture || '';
+    document.getElementById('privateAccount').checked = userData.isPrivate || false;
+  },
+
+  showPrivateProfileMessage() {
+    const postsContainer = document.querySelector('.posts-container');
+    if (postsContainer) {
+      postsContainer.innerHTML = `
+        <div class="private-profile-message">
+          <i class="fas fa-lock"></i>
+          <h2>Conta Privada</h2>
+          <p>Este perfil é privado. Siga este usuário para ver seus posts.</p>
+        </div>
+      `;
+    }
   }
 };
 
@@ -145,11 +159,26 @@ const profileManager = {
         
         ui.updateProfileUI(userData);
         await this.updateFollowerCount(state.profileUserId);
+        
+        // Verifica se o perfil é privado e se o usuário atual tem acesso
+        const currentUser = auth.currentUser;
+        const isOwnProfile = currentUser && currentUser.uid === state.profileUserId;
+        
+        // Verifica se o usuário está seguindo
+        const hasAccess = isOwnProfile || await this.checkIfFollowing(currentUser?.uid, state.profileUserId);
+        
+        // Verifica se a conta é privada
+        const isPrivate = userData.isPrivate || false;
+        
+        if (isPrivate && !hasAccess) {
+          // Se o perfil é privado e o usuário não tem acesso, mostra mensagem
+          ui.showPrivateProfileMessage();
+          return;
+        }
+        
         await this.loadUserTweets(state.profileUserId);
         
         // Configura os botões após carregar o perfil
-        const currentUser = auth.currentUser;
-        const isOwnProfile = currentUser && currentUser.uid === state.profileUserId;
         ui.toggleButtons(isOwnProfile);
         
         if (!isOwnProfile && currentUser) {

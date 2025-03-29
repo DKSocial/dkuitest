@@ -352,6 +352,33 @@
             font-size: 14px;
         }
 
+        .private-profile-message {
+          text-align: center;
+          padding: 40px 20px;
+          background: #FAF5FF;
+          border: 1px solid #B794F4;
+          border-radius: 14px;
+          margin-top: 20px;
+        }
+
+        .private-profile-message i {
+          font-size: 48px;
+          color: #9F7AEA;
+          margin-bottom: 20px;
+        }
+
+        .private-profile-message h2 {
+          color: #4A148C;
+          margin: 0 0 10px 0;
+          font-size: 24px;
+        }
+
+        .private-profile-message p {
+          color: #6B46C1;
+          margin: 0;
+          font-size: 16px;
+        }
+
         .posts-container {
             background-color: #FAF5FF;
             padding: 20px;
@@ -540,7 +567,38 @@
         // Configurar botões
         setupProfileButtons();
 
-        // Carregar posts
+        // Verificar se o perfil é privado e se o usuário tem acesso
+        const currentUser = auth.currentUser;
+        const isOwnProfile = currentUser && currentUser.uid === userId;
+        const isPrivate = userData.isPrivate || false;
+        
+        // Verificar se o usuário está seguindo
+        let hasAccess = isOwnProfile;
+        if (!isOwnProfile && currentUser) {
+          const followDoc = await db.collection('followers')
+            .doc(userId)
+            .collection('userFollowers')
+            .doc(currentUser.uid)
+            .get();
+          hasAccess = followDoc.exists;
+        }
+
+        // Se o perfil é privado e o usuário não tem acesso, mostrar mensagem
+        if (isPrivate && !hasAccess) {
+          const postsContainer = document.querySelector('.posts-container');
+          if (postsContainer) {
+            postsContainer.innerHTML = `
+              <div class="private-profile-message">
+                <i class="fas fa-lock"></i>
+                <h2>Conta Privada</h2>
+                <p>Este perfil é privado. Siga este usuário para ver seus posts.</p>
+              </div>
+            `;
+          }
+          return;
+        }
+
+        // Carregar posts se tiver acesso
         await loadUserPosts(userId);
       } catch (error) {
         console.error('Erro ao carregar dados do perfil:', error);

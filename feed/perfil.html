@@ -47,11 +47,9 @@
       <label for="editBio">Biografia:</label>
       <textarea id="editBio" name="editBio" rows="4" required></textarea>
       
-      <!-- Input de imagem para upload -->
       <label for="imageUpload">Foto de Perfil:</label>
-      <input type="file" id="imageUpload" name="imageUpload" accept="image/*" required>
+      <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
       
-      <!-- Input oculto para armazenar a imagem em Base64 -->
       <input type="hidden" id="editProfilePicture" name="editProfilePicture">
       
       <button type="submit">Salvar</button>
@@ -250,6 +248,108 @@
   gap: 15px;
   color: #6B46C1;
   font-size: 14px;
+}
+
+.settings-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #E9D8FD;
+}
+
+.settings-item:last-child {
+  border-bottom: none;
+}
+
+.settings-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.settings-item-info h3 {
+  font-size: 16px;
+  color: #4A148C;
+  margin: 0;
+}
+
+.settings-item-info p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #9F7AEA;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.private-profile-message {
+  text-align: center;
+  padding: 40px 20px;
+  background: #FAF5FF;
+  border: 1px solid #B794F4;
+  border-radius: 14px;
+  margin-top: 20px;
+}
+
+.private-profile-message i {
+  font-size: 48px;
+  color: #9F7AEA;
+  margin-bottom: 20px;
+}
+
+.private-profile-message h2 {
+  color: #4A148C;
+  margin: 0 0 10px 0;
+  font-size: 24px;
+}
+
+.private-profile-message p {
+  color: #6B46C1;
+  margin: 0;
+  font-size: 16px;
 }
   </style>
 

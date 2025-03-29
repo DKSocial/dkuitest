@@ -26,18 +26,22 @@ body {
 .chat-container {
   display: flex;
   width: 100%;
+  height: 100dvh;
   background-color: #FAF5FF;
   border: 1px solid #B794F4;
-  overflow: hidden;
-  position: relative; /* Necessário para posicionar a sidebar e o chat */
 }
 
 /* Lista de conversas */
 .conversation-list {
   width: 30%;
   border-right: 1px solid #B794F4;
+  display: flex;
+  flex-direction: column;
+}
+
+#conversations-list {
+  flex: 1;
   overflow-y: auto;
-  transition: transform 0.3s ease;
 }
 
 .conversation-list-header {
@@ -91,7 +95,34 @@ body {
   width: 70%;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
+}
+
+.fizz-iframe {
+  width: 70%;
+  height: 100%;
+  border: none;
+  display: none;
+}
+
+.fizz-iframe.visible {
+  display: block;
+}
+
+.close-fizz {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  color: #4A148C;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10001;
+  display: none;
+}
+
+.close-fizz.visible {
+  display: block;
 }
 
 .chat-header {
@@ -115,10 +146,8 @@ body {
 
 .chat-messages {
   flex: 1;
-  padding: 20px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  padding: 20px;
 }
 
 /* Estilo da mensagem */
@@ -168,10 +197,11 @@ body {
 }
 
 .chat-input {
-  display: flex;
   padding: 10px;
   border-top: 1px solid #B794F4;
-  background-color: #FAF5FF; /* Adicionado para garantir visibilidade */
+  background-color: #FAF5FF;
+  display: flex;
+  gap: 10px;
 }
 
 .chat-input input {
@@ -208,28 +238,29 @@ body {
 
 /* Responsividade para celular */
 @media (max-width: 1028px) {
+  .chat-container {
+    position: relative;
+  }
+
   .conversation-list {
     width: 100%;
-    position: absolute; /* Remove a sidebar do fluxo do layout */
+    position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
-    background-color: #FAF5FF; /* Mantém o fundo da sidebar */
-    z-index: 10; /* Garante que a sidebar fique acima do chat */
-    transform: translateX(0);
-    transition: transform 0.3s ease;
+    background-color: #FAF5FF;
+    z-index: 10;
   }
 
   .chat-area {
     width: 100%;
-    position: absolute; /* Remove o chat do fluxo do layout */
+    position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
-    background-color: #FAF5FF; /* Mantém o fundo do chat */
-    z-index: 9999; /* Garante que o chat fique abaixo da sidebar */
+    background-color: #FAF5FF;
+    z-index: 9999;
     transform: translateX(100%);
-    transition: transform 0.3s ease;
   }
 
   .chat-area.visible {
@@ -240,28 +271,29 @@ body {
     transform: translateX(-100%);
   }
 
-  .back-button {
-    display: inline-block;
-  }
-
   .chat-input {
-    position: fixed; /* Fixa o input na parte inferior */
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #FAF5FF; /* Garante que o input seja visível */
-    z-index: 10000; /* Garante que o input fique acima de outros elementos */
+    background-color: #FAF5FF;
+    z-index: 10000;
   }
-  /* Container principal do chat */
-.chat-container {
-  display: flex;
-  width: 100%;
-  background-color: #FAF5FF;
-  border: 1px solid #B794F4;
-  overflow: hidden;
-  min-height: 100dvh;
-  position: relative; /* Necessário para posicionar a sidebar e o chat */
-}
+
+  .fizz-iframe {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #FAF5FF;
+    z-index: 9999;
+    transform: translateX(100%);
+  }
+
+  .fizz-iframe.visible {
+    transform: translateX(0);
+  }
 }
 
 @media (max-width: 1028px) {
@@ -283,9 +315,15 @@ user-select: none;
         <h2>Conversas</h2>
         <button class="new-chat-btn" onclick="startNewChat()">Nova Conversa</button>
       </div>
-      <div id="conversations-list">
-        <!-- Conversas serão carregadas aqui -->
+      <!-- Chat predefinido -->
+      <div class="conversation-item" onclick="openFizz()">
+        <img src="./fizz.png" alt="Chat Demo">
+        <div class="conversation-info">
+          <h3>FizzAI</h3>
+          <p>A IA mais brasileira de todas</p>
+        </div>
       </div>
+      <div id="conversations-list"></div>
     </div>
 
     <!-- Área de chat -->
@@ -604,6 +642,43 @@ async function getConversationName(conversation) {
     return participantNames.filter(Boolean).join(", ");
   }
 }
+  </script>
+  <script>
+    function openFizz() {
+      // Esconde a área de chat
+      document.getElementById('chat-area').style.display = 'none';
+      
+      // Cria o iframe se não existir
+      let fizzFrame = document.getElementById('fizz-frame');
+      if (!fizzFrame) {
+        fizzFrame = document.createElement('iframe');
+        fizzFrame.id = 'fizz-frame';
+        fizzFrame.className = 'fizz-iframe';
+        fizzFrame.src = 'fizz.html';
+        document.querySelector('.chat-container').appendChild(fizzFrame);
+      }
+      
+      // Mostra o iframe
+      fizzFrame.classList.add('visible');
+      
+      // No mobile, esconde a lista de conversas
+      if (window.innerWidth <= 1028) {
+        document.getElementById('conversation-list').classList.add('hidden');
+      }
+    }
+
+    // Função para voltar do Fizz para o chat normal (será chamada pelo fizz.html)
+    function closeFizz() {
+      document.getElementById('chat-area').style.display = 'flex';
+      const fizzFrame = document.getElementById('fizz-frame');
+      if (fizzFrame) {
+        fizzFrame.classList.remove('visible');
+      }
+      
+      if (window.innerWidth <= 1028) {
+        document.getElementById('conversation-list').classList.remove('hidden');
+      }
+    }
   </script>
 </body>
 </html>

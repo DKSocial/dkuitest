@@ -11,6 +11,22 @@
     {
       "source": "/mobile-login/:sessionId",
       "destination": "/log/mobile-login/[sessionId].html"
+    },
+    {
+      "source": "/feed/main",
+      "destination": "/feed/feed.html"
+    },
+    {
+      "source": "/feed/inbox",
+      "destination": "/feed/chat.html"
+    },
+    {
+      "source": "/feed/explore",
+      "destination": "/feed/explore.html"
+    },
+    {
+      "source": "/feed/settings",
+      "destination": "/feed/settings.html"
     }
   ]
 } 
